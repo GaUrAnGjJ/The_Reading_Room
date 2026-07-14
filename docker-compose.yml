@@ -1,0 +1,36 @@
+services:
+  vertex-valet-api:
+    build: .
+    container_name: vertex-valet-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount storage and recommender directories to persist data and embeddings
+      - ./storage:/app/storage
+      - ./recommender:/app/recommender
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      sh -c "
+      if [ ! -f /app/storage/library.db ]; then
+        echo 'Initializing database...';
+        python pipeline.py --db;
+      fi;
+      if [ ! -f /app/recommender/embeddings.pkl ]; then
+        echo 'Building embeddings...';
+        python recommender/build_embeddings.py;
+      fi;
+      uvicorn API.main:app --host 0.0.0.0 --port 8000
+      "
+
+  vertex-valet-frontend:
+    image: python:3.11-slim
+    container_name: vertex-valet-frontend
+    working_dir: /app/frontend
+    volumes:
+      - ./frontend:/app/frontend
+    command: python -m http.server 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - vertex-valet-api

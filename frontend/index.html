@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex Valet - Intelligent Book Search</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">Vertex Valet</div>
+            <p class="subtitle">Your intelligent literary assistant</p>
+        </header>
+
+        <main>
+            <div class="search-section">
+                <div class="search-controls">
+                    <button id="mode-recommend" class="mode-btn active" onclick="setMode('recommend')">✨
+                        Recommend</button>
+                </div>
+
+                <div class="input-wrapper">
+                    <input type="text" id="search-input"
+                        placeholder="Describe the book you're looking for... (e.g., 'space opera with robots')">
+                    <button id="search-btn" onclick="performSearch()">
+                        <span id="btn-text">Go</span>
+                        <div id="loader" class="loader hidden"></div>
+                    </button>
+                </div>
+                <div id="search-hint" class="hint-text">Powered by Semantic Search</div>
+            </div>
+
+            <div id="results-container" class="results-grid">
+                <!-- Results will be injected here -->
+                <div class="empty-state">
+                    <p>Enter a description or keywords to discover your next read.</p>
+                </div>
+            </div>
+
+            <section id="random-books-section" class="random-books-section hidden">
+                <h2 class="section-title">From the Library Shelves</h2>
+                <div class="scroll-container">
+                    <div id="random-books-list" class="random-books-list">
+                        <!-- Random books will be injected here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Vertex Valet. </p>
+        </footer>
+    </div>
+
+    <!-- Modal for Book Details -->
+    <div id="book-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

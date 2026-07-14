@@ -1,0 +1,22 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.vscode/
+.idea/
+.git/
+.gitignore
+Dockerfile
+.dockerignore
+logs/
+data/raw/
+# If you want to exclude existing databases or embeddings to rebuild them inside the container
+# storage/*.db
+# recommender/*.pkl
