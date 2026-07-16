@@ -1,5 +1,9 @@
+from dotenv import load_dotenv
+load_dotenv()  # Load GROQ_API_KEY from .env before anything else
+
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 import sqlite3
 
 app = FastAPI(title="Books API")
@@ -106,6 +110,54 @@ def recommend_books(query: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Recommendation failed: {str(e)}")
 
+## RAG Chat Endpoint
+
+from chat.chatbot import chat as rag_chat
+
+class ChatMessage(BaseModel):
+    role: str    # "user" or "assistant"
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list[ChatMessage] = []
+
+@app.post("/chat")
+def chat_endpoint(request: ChatRequest):
+    """RAG chat endpoint.
+
+    Accepts a user message and prior conversation history.
+    Returns a grounded LLM reply, the retrieved books, and the search query used.
+
+    Returns:
+        200: {reply, books, search_query}
+        503: Recommender model not loaded yet
+        502: Groq API call failed
+    """
+    if not recommender_engine.loaded:
+        raise HTTPException(
+            status_code=503,
+            detail="Recommender model is not loaded yet. Try again in a moment."
+        )
+
+    # Convert Pydantic models to plain dicts for chatbot.py
+    history_dicts = [{"role": m.role, "content": m.content} for m in request.history]
+
+    try:
+        result = rag_chat(
+            message=request.message,
+            history=history_dicts,
+            recommender=recommender_engine,
+        )
+    except EnvironmentError as e:
+        # GROQ_API_KEY not set
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Groq API error: {str(e)}")
+
+    return result
+
+
 # Serve static files from the frontend directory
-# This must be the last route to allow other API routes to take precedence
+# This must be the LAST route so API routes take precedence
 app.mount("/", StaticFiles(directory="frontend", html=True), name="static")

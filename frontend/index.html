@@ -5,58 +5,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vertex Valet - Intelligent Book Search</title>
+    <meta name="description" content="Discover your next read with Vertex Valet — an AI-powered book recommendation engine using semantic search over 28,000 titles.">
     <link rel="stylesheet" href="styles.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="app-container">
-        <header>
-            <div class="logo">Vertex Valet</div>
-            <p class="subtitle">Your intelligent literary assistant</p>
-        </header>
+    <!-- The Reading Desk container -->
+    <div class="reading-desk">
+        
+        <!-- The Open Book Spread -->
+        <div class="book-spread">
+            
+            <!-- Left Page: Header + Search Controls -->
+            <div class="book-page left-page">
+                <header class="book-title-page">
+                    <div class="logo">Vertex Valet</div>
+                    <p class="subtitle">Your intelligent literary companion — 28,000+ titles at your fingertips</p>
+                    <div class="header-rule">
+                        <span class="rule-line"></span>
+                        <span class="rule-ornament">❧</span>
+                        <span class="rule-line"></span>
+                    </div>
+                </header>
 
-        <main>
-            <div class="search-section">
-                <div class="search-controls">
-                    <button id="mode-recommend" class="mode-btn active" onclick="setMode('recommend')">✨
-                        Recommend</button>
+                <div class="search-section">
+                    <div class="input-wrapper">
+                        <input type="text" id="search-input"
+                            placeholder="Search by title or author... (e.g., 'Game of Thrones', 'Asimov')">
+                        <button id="search-btn" onclick="performSearch()">
+                            <span id="btn-text">Search</span>
+                            <div id="loader" class="loader hidden"></div>
+                        </button>
+                    </div>
+                    <div id="search-hint" class="hint-text">Keyword search &nbsp;·&nbsp; For AI recommendations, use the <strong>Bot</strong> →</div>
                 </div>
 
-                <div class="input-wrapper">
-                    <input type="text" id="search-input"
-                        placeholder="Describe the book you're looking for... (e.g., 'space opera with robots')">
-                    <button id="search-btn" onclick="performSearch()">
-                        <span id="btn-text">Go</span>
-                        <div id="loader" class="loader hidden"></div>
-                    </button>
+                <!-- Most Searched Queries -->
+                <section id="popular-queries-section" class="popular-queries-section hidden">
+                    <div class="section-header">
+                        <h2 class="section-title">🔥 Most Searched</h2>
+                        <button class="clear-history-btn" onclick="clearSearchHistory()" title="Clear search history">Clear</button>
+                    </div>
+                    <div id="popular-queries-list" class="queries-list">
+                        <!-- Query chips injected here -->
+                    </div>
+                </section>
+
+                <div class="left-page-footer">
+                    <span>Vertex Valet Catalog</span>
                 </div>
-                <div id="search-hint" class="hint-text">Powered by Semantic Search</div>
             </div>
 
-            <div id="results-container" class="results-grid">
-                <!-- Results will be injected here -->
-                <div class="empty-state">
-                    <p>Enter a description or keywords to discover your next read.</p>
-                </div>
+            <!-- Gutter Crease & Ribbon Bookmark -->
+            <div class="book-gutter">
+                <div class="ribbon-bookmark"></div>
             </div>
 
-            <section id="random-books-section" class="random-books-section hidden">
-                <h2 class="section-title">From the Library Shelves</h2>
-                <div class="scroll-container">
-                    <div id="random-books-list" class="random-books-list">
-                        <!-- Random books will be injected here -->
+            <!-- Right Page: Search Results + Shelves -->
+            <div class="book-page right-page">
+                <div class="right-page-header">
+                    <h2 class="section-title">🔍 Search Results</h2>
+                </div>
+
+                <!-- Results Grid -->
+                <div id="results-container" class="results-grid">
+                    <div class="empty-state">
+                        <p>Enter keywords on the left page to discover your next read.</p>
                     </div>
                 </div>
-            </section>
-        </main>
 
-        <footer>
-            <p>&copy; 2026 Vertex Valet. </p>
-        </footer>
+                <!-- From the Shelves -->
+                <section id="random-books-section" class="random-books-section hidden">
+                    <div class="section-header">
+                        <h2 class="section-title">📖 Library Shelves</h2>
+                    </div>
+                    <div class="scroll-container">
+                        <div id="random-books-list" class="random-books-list">
+                            <!-- Random books will be injected here -->
+                        </div>
+                    </div>
+                </section>
+
+                <div class="right-page-footer">
+                    <span>Index of Books</span>
+                </div>
+            </div>
+            
+        </div>
     </div>
 
     <!-- Modal for Book Details -->
@@ -64,6 +102,64 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Floating Bot Button -->
+    <button id="chat-fab" class="chat-fab" onclick="toggleChat()" title="Ask the Reading Room Bot">
+        <svg class="bot-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="8" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="9" cy="13" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="13" r="1.5" fill="currentColor"/>
+            <path d="M12 4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+            <path d="M5 13H3M21 13h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M9 18v2M15 18v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="fab-label">Bot</span>
+    </button>
+
+    <!-- Chat Panel -->
+    <div id="chat-panel" class="chat-panel hidden">
+        <div class="chat-header">
+            <div class="chat-header-title">
+                <div class="chat-bot-avatar">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="8" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                        <circle cx="9" cy="13" r="1.5" fill="currentColor"/>
+                        <circle cx="15" cy="13" r="1.5" fill="currentColor"/>
+                        <path d="M12 4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        <circle cx="12" cy="3.5" r="1.5" fill="currentColor"/>
+                        <path d="M5 13H3M21 13h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="chat-header-name">Reading Room Bot</div>
+                    <div class="chat-header-sub">AI-powered book guide</div>
+                </div>
+            </div>
+            <button class="chat-close-btn" onclick="toggleChat()" title="Close">✕</button>
+        </div>
+
+        <div id="chat-messages" class="chat-messages">
+            <div class="chat-bubble assistant">
+                <p>Hello! I'm your literary guide. Describe the kind of book you're looking for and I'll find the best match — with explanations, not just a list.</p>
+                <p style="margin-top:0.5rem; font-style:italic; font-size:0.9rem;">Try: <em>"a sad story about a robot"</em> or <em>"something like Gone Girl but shorter"</em></p>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <textarea
+                id="chat-input"
+                class="chat-input"
+                placeholder="Ask about a book..."
+                rows="1"
+                onkeydown="handleChatKey(event)"
+            ></textarea>
+            <button id="chat-send-btn" class="chat-send-btn" onclick="sendChatMessage()" title="Send">
+                <span id="chat-send-icon">➤</span>
+                <div id="chat-loader" class="loader hidden"></div>
+            </button>
         </div>
     </div>
 

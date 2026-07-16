@@ -1,49 +1,75 @@
 const API_BASE_URL = '';
 
-let currentMode = 'recommend'; // 'recommend' or 'search'
+// ── Search History (Most Searched) ───────────────────────────────
+const HISTORY_KEY = 'vv_search_history';
 
-function setMode(mode) {
-    currentMode = mode;
-    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`mode-${mode}`).classList.add('active');
-
-    // Update placeholder and hint
-    const input = document.getElementById('search-input');
-    const hint = document.getElementById('search-hint');
-
-    if (mode === 'recommend') {
-        input.placeholder = "Describe the book you're looking for... (e.g., 'future with AI')";
-        hint.textContent = "Powered by Semantic Search - Finds books by meaning";
-    } else {
-        input.placeholder = "Search by title or author... (e.g., 'Game of thrones')";
-        hint.textContent = "Powered by Keyword Search - Finds exact matches";
-    }
+function trackSearch(query) {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    const history = raw ? JSON.parse(raw) : {};
+    history[query] = (history[query] || 0) + 1;
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderPopularQueries();
 }
+
+function renderPopularQueries() {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) return;
+    const history = JSON.parse(raw);
+    const sorted = Object.entries(history)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8);
+
+    if (sorted.length === 0) return;
+
+    const section = document.getElementById('popular-queries-section');
+    const list = document.getElementById('popular-queries-list');
+    section.classList.remove('hidden');
+    list.innerHTML = '';
+
+    sorted.forEach(([query, count]) => {
+        const chip = document.createElement('button');
+        chip.className = 'query-chip';
+        chip.innerHTML = `${query} <span class="chip-count">${count}</span>`;
+        chip.onclick = () => {
+            document.getElementById('search-input').value = query;
+            performSearch();
+        };
+        list.appendChild(chip);
+    });
+}
+
+function clearSearchHistory() {
+    localStorage.removeItem(HISTORY_KEY);
+    document.getElementById('popular-queries-section').classList.add('hidden');
+    document.getElementById('popular-queries-list').innerHTML = '';
+}
+
+// Load history + wire Enter key on startup
+window.addEventListener('DOMContentLoaded', () => {
+    fetchRandomBooks();
+    renderPopularQueries();
+    document.getElementById('search-input').addEventListener('keypress', e => {
+        if (e.key === 'Enter') performSearch();
+    });
+});
 
 async function performSearch() {
     const query = document.getElementById('search-input').value.trim();
     if (!query) return;
 
-    // UI Loading State
+    trackSearch(query);  // ← save to history
+
     const btnText = document.getElementById('btn-text');
     const loader = document.getElementById('loader');
     const resultsContainer = document.getElementById('results-container');
 
     btnText.classList.add('hidden');
     loader.classList.remove('hidden');
-    resultsContainer.innerHTML = ''; // Clear previous
+    resultsContainer.innerHTML = '';
 
     try {
-        let endpoint = currentMode === 'recommend' ? '/recommend' : '/search';
-        // Note: /recommend uses ?query=, /search uses ?q=
-        const paramName = currentMode === 'recommend' ? 'query' : 'q';
-
-        const response = await fetch(`${API_BASE_URL}${endpoint}?${paramName}=${encodeURIComponent(query)}`);
-
-        if (!response.ok) {
-            throw new Error('API Request failed');
-        }
-
+        const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`);
+        if (!response.ok) throw new Error('API Request failed');
         const data = await response.json();
         renderResults(data);
 
@@ -131,22 +157,9 @@ function renderResults(books) {
 }
 
 function showBookDetails(book) {
-    // For now, just log or simple alert, or maybe expand card.
-    // Ideally user would want more info, but our API currently returns limited info.
-    // If we had a /books/{isbn} endpoint, we could fetch details here.
     console.log("Clicked book:", book);
-    // Future enhancement: Open modal with details
 }
 
-// Allow Enter key to search
-document.getElementById('search-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        performSearch();
-    }
-});
-
-// Load random books on startup
-window.addEventListener('DOMContentLoaded', fetchRandomBooks);
 async function fetchRandomBooks() {
     const list = document.getElementById('random-books-list');
     const section = document.getElementById('random-books-section');
@@ -211,7 +224,6 @@ function renderBookList(books, container) {
 
         card.onclick = (e) => {
             if (e.target.closest('.more-details-btn')) return;
-            // Optional: show details
         };
         container.appendChild(card);
     });
@@ -224,14 +236,147 @@ function toggleDescription(event, btn) {
     const fullText = container.querySelector('.desc-full');
 
     if (shortText.classList.contains('hidden')) {
-        // Currently showing full, switch to short
         shortText.classList.remove('hidden');
         fullText.classList.add('hidden');
         btn.textContent = 'Show More';
     } else {
-        // Currently showing short, switch to full
         shortText.classList.add('hidden');
         fullText.classList.remove('hidden');
         btn.textContent = 'Show Less';
     }
+}
+
+// ── Chat Logic ────────────────────────────────────────────────────────────────
+
+let chatHistory = [];  // [{role: 'user'|'assistant', content: '...'}]
+let chatOpen = false;
+
+function toggleChat() {
+    const panel = document.getElementById('chat-panel');
+    chatOpen = !chatOpen;
+
+    if (chatOpen) {
+        panel.classList.remove('hidden');
+        document.getElementById('chat-input').focus();
+    } else {
+        panel.classList.add('hidden');
+    }
+}
+
+function handleChatKey(event) {
+    // Send on Enter (without Shift for newline)
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendChatMessage();
+    }
+}
+
+async function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Clear input
+    input.value = '';
+    input.style.height = 'auto';
+
+    // Show user bubble
+    appendBubble('user', message);
+
+    // Disable send button
+    const sendBtn = document.getElementById('chat-send-btn');
+    const sendIcon = document.getElementById('chat-send-icon');
+    const chatLoader = document.getElementById('chat-loader');
+    sendBtn.disabled = true;
+    sendIcon.classList.add('hidden');
+    chatLoader.classList.remove('hidden');
+
+    // Show typing indicator
+    const typingId = showTypingIndicator();
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, history: chatHistory }),
+        });
+
+        removeTypingIndicator(typingId);
+
+        if (!response.ok) {
+            const err = await response.json();
+            appendBubble('assistant', `⚠️ ${err.detail || 'Something went wrong. Please try again.'}`);
+            return;
+        }
+
+        const data = await response.json();
+
+        // Show reply + retrieved books
+        appendAssistantBubble(data.reply, data.books || []);
+
+        // Update history for multi-turn
+        chatHistory.push({ role: 'user', content: message });
+        chatHistory.push({ role: 'assistant', content: data.reply });
+
+    } catch (err) {
+        removeTypingIndicator(typingId);
+        appendBubble('assistant', '⚠️ Could not reach the server. Is the backend running?');
+    } finally {
+        sendBtn.disabled = false;
+        sendIcon.classList.remove('hidden');
+        chatLoader.classList.add('hidden');
+    }
+}
+
+function appendBubble(role, text) {
+    const messages = document.getElementById('chat-messages');
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble ${role}`;
+    bubble.textContent = text;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function appendAssistantBubble(reply, books) {
+    const messages = document.getElementById('chat-messages');
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble assistant';
+
+    // Reply text
+    const replyEl = document.createElement('p');
+    replyEl.textContent = reply;
+    bubble.appendChild(replyEl);
+
+    // Book pills
+    if (books.length > 0) {
+        const booksEl = document.createElement('div');
+        booksEl.className = 'chat-books';
+        books.slice(0, 5).forEach(book => {
+            const pill = document.createElement('div');
+            pill.className = 'chat-book-pill';
+            pill.textContent = `${book.title} — ${book.author || 'Unknown'}`;
+            booksEl.appendChild(pill);
+        });
+        bubble.appendChild(booksEl);
+    }
+
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const messages = document.getElementById('chat-messages');
+    const bubble = document.createElement('div');
+    const id = 'typing-' + Date.now();
+    bubble.id = id;
+    bubble.className = 'chat-bubble typing';
+    bubble.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+    return id;
+}
+
+function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
 }

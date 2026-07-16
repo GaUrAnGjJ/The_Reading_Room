@@ -12,9 +12,10 @@ pip-delete-this-directory.txt
 .vscode/
 .idea/
 logs/
-.agents/
-.antigravity/
 .dockerignore/
+.gitattributes/
 docker-compose.yml/
-Dockerfile/
-
+dockerfile/
+start.sh/
+RAG_CHATBOT_IMPLEMENTATION.md/
+ponytail/

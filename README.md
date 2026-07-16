@@ -1,11 +1,20 @@
+---
+title: Vertex Valet
+emoji: 📚
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 8000
+pinned: false
+---
+
 # Vertex-Valet
 
-**Live Demo:** [Vertex Valet - Intelligent Book Search](https://gaurangj-vertex-valet.hf.space/)
+**Live Demo:** [Vertex Valet - Intelligent Book Search](https://gaurangj-vertex-valet.hf.space)
 
 Vertex Valet is an intelligent book recommendation and search system designed to help users discover books using natural language. Unlike traditional search engines that rely on keyword matching, Vertex Valet utilizes semantic search to understand the *meaning* and *context* of your query.
 
 Whether you're looking for a "sad story about a robot" or "a history of space exploration," Vertex Valet finds the most relevant books from a curated dataset of over 28,000 titles.
-
 
 ---
 
@@ -16,7 +25,7 @@ Whether you're looking for a "sad story about a robot" or "a history of space ex
 *   **High-Performance API**: Built with **FastAPI** for asynchronous, low-latency responses.
 *   **Modern Frontend**: A clean, responsive web interface featuring dynamic book cards, cover images, and interactive descriptions.
 *   **End-to-End ETL Pipeline**: A complete data engineering workflow including ingestion, cleaning, transformation, and storage.
-*   **Dockerized Deployment**: Fully containerized for easy deployment on platforms like Railway.
+*   **Dockerized Deployment**: Fully containerized and deployed on **Hugging Face Spaces**.
 
 ---
 
@@ -41,10 +50,11 @@ graph LR
 -   **Language**: Python 3.11
 -   **Backend Framework**: FastAPI
 -   **Database**: SQLite
--   **ML Model**: `distilbert-base-nli-stsb-mean-tokens` / `all-MiniLM-L6-v2`
+-   **ML Model**: `all-MiniLM-L6-v2` (Sentence Transformers)
 -   **Vector Search**: Scikit-Learn (Cosine Similarity)
 -   **Frontend**: Vanilla HTML5, CSS3, JavaScript
 -   **Containerization**: Docker
+-   **Hosting**: Hugging Face Spaces
 
 ---
 
@@ -109,6 +119,18 @@ The Docker image automatically handles database initialization and model downloa
 
 ---
 
+## Deploying on Hugging Face Spaces
+
+This project is deployed as a **Docker Space** on Hugging Face.
+
+1. Fork / push the repo to your Hugging Face Space (ensure `sdk: docker` and `app_port: 8000` are set in the README front matter).
+2. Hugging Face will automatically build the Docker image and expose the app at your Space URL.
+3. Large files (`storage/library.db`, `recommender/embeddings.pkl`) are tracked with **Git LFS** — make sure LFS is enabled on your HF repo.
+
+> **Live:** [https://gaurangj-vertex-valet.hf.space](https://gaurangj-vertex-valet.hf.space)
+
+---
+
 ## Dataset Statistics
 
 ### Content Metrics
@@ -125,17 +147,13 @@ The Docker image automatically handles database initialization and model downloa
 
 ---
 
-
 ## Application Screenshots
 
 ![Search Query](screenshots/UI.png)
 
-
 ![Search Results](screenshots/search.png)
 
-
 ![Random books](screenshots/shelves.png)
-
 
 ---
 
@@ -145,12 +163,9 @@ The Docker image automatically handles database initialization and model downloa
 
 | Name | GitHub |
 | :--- | :--- |
-| **Gaurang Jadav** | [@gaurangjadav](https://github.com/GaUrAnGjJ) |
+| **Gaurang Jadav** | [@GaUrAnGjJ](https://github.com/GaUrAnGjJ) |
 | **Het Katrodiya** | [@hetsoni1313](https://github.com/hetsoni1313) |
-
 
 </div>
 
 ---
-
-
