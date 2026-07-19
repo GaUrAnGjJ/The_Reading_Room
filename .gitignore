@@ -12,10 +12,11 @@ pip-delete-this-directory.txt
 .vscode/
 .idea/
 logs/
-.dockerignore/
-.gitattributes/
-docker-compose.yml/
-dockerfile/
-start.sh/
-RAG_CHATBOT_IMPLEMENTATION.md/
 ponytail/
+README__.md
+RAG_CHATBOT_IMPLEMENTATION.md
+
+# Large files — hosted on GitHub Releases, downloaded by start.sh at runtime
+recommender/embeddings.pkl
+storage/library.db
+data/processed/

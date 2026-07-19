@@ -1,13 +1,3 @@
----
-title: The Reading Room
-emoji: 📚
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 8000
-pinned: false
----
-
 <div align="center">
 
 # 📚 The Reading Room
@@ -17,9 +7,6 @@ pinned: false
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.128-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Hugging Face](https://img.shields.io/badge/HuggingFace-Spaces-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/spaces/gaurangj/vertex-valet)
-
-**Live Demo:** [https://gaurangj-vertex-valet.hf.space](https://gaurangj-vertex-valet.hf.space)
 
 </div>
 
@@ -44,7 +31,7 @@ Whether you type *"a melancholy story about artificial intelligence"* or ask *"s
 | 5 | **Anti-Hallucination** | LLM is hard-constrained to only cite titles present in retrieved context |
 | 6 | **End-to-End ETL** | Complete data pipeline: raw CSV → ingestion → cleaning → SQLite → embeddings |
 | 7 | **High-Performance API** | Async FastAPI with a singleton recommender loaded at startup |
-| 8 | **Dockerized Deployment** | One-command deployment on Hugging Face Spaces via Docker |
+| 8 | **Dockerized Deployment** | One-command local deployment via Docker |
 
 ---
 
@@ -449,66 +436,6 @@ Using Docker Compose:
 GROQ_API_KEY=your_key_here docker-compose up
 ```
 
----
-
-## 🚀 Deploying on Hugging Face Spaces
-
-This project is deployed as a **Docker Space** on Hugging Face. Follow these steps exactly:
-
-### 1. Create the Space
-
-Go to [huggingface.co/new-space](https://huggingface.co/new-space), choose **SDK: Docker**, set the name to `the-reading-room`, and pick your preferred visibility.
-
-### 2. Set Up Git LFS (before pushing large files)
-
-> ⚠️ Do this **before** adding large files — skipping this causes history bloat that requires painful rewrites.
-
-```bash
-git lfs install
-git lfs track "*.pkl" "*.db"
-git add .gitattributes
-git commit -m "chore: track large files with Git LFS"
-```
-
-### 3. Add the HF Space as a remote
-
-```bash
-git remote add space https://huggingface.co/spaces/<your-username>/the-reading-room
-```
-
-### 4. Push to the Space
-
-```bash
-git push space main
-```
-
-If your local default branch is not `main`, push explicitly:
-```bash
-git push space your-local-branch:main
-```
-
-> **Auth:** When prompted for a password, use a **Hugging Face Access Token** (Settings → Access Tokens), not your account password.
-
-### 5. Set the GROQ_API_KEY secret
-
-On your Space page → **Settings → Repository secrets** → add `GROQ_API_KEY`.
-
-> Never put the API key in the Dockerfile or commit it to the repo.
-
-### 6. Monitor the build
-
-Check the **Logs** tab on your Space. Common failure causes:
-- ❌ Port mismatch — the app must listen on **7860** (already configured)
-- ❌ Missing dependency in `requirements.txt`
-- ❌ Large files not tracked with Git LFS
-
-Once the build succeeds, your app is live at:
-
-```
-https://huggingface.co/spaces/<your-username>/the-reading-room
-```
-
-> **Live Demo:** [https://gaurangj-vertex-valet.hf.space](https://gaurangj-vertex-valet.hf.space)
 
 ---
 

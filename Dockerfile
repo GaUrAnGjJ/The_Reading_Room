@@ -8,38 +8,34 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies
+# Install system dependencies (wget is required by start.sh to download large files)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file first to leverage Docker cache
 COPY requirements.txt .
 
-# Install Python dependencies
-# Explicitly install CPU-only version of PyTorch to save massive space (2GB+ savings)
+# Install CPU-only PyTorch (saves 2GB+ vs GPU version)
 RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 # Install remaining dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Pre-download the transformer model to the image cache to ensure fast startup
-# This prevents downloading it at runtime which causes timeouts
+# Pre-download the sentence-transformer model into the image cache
+# This avoids downloading it at runtime which causes slow cold starts
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
 # Copy the rest of the application code
+# NOTE: embeddings.pkl and library.db are NOT in the repo (too large for GitHub)
+#       start.sh downloads them from GitHub Releases at first startup
 COPY . .
 
-# Initialize database if it doesn't exist
-RUN if [ ! -f storage/library.db ]; then echo "Building database..."; python pipeline.py --db; fi
+# Expose port 8000
+EXPOSE 8000
 
-# Build embeddings if they don't exist
-RUN if [ ! -f recommender/embeddings.pkl ]; then echo "Building embeddings..."; python recommender/build_embeddings.py; fi
-
-# Expose port 7860 for Hugging Face Spaces (HF default)
-EXPOSE 7860
-
-# Copy and prepare startup script
+# Prepare startup script
 COPY start.sh .
 RUN chmod +x start.sh
 
