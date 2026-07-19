@@ -1,4 +1,4 @@
-"""RAG chatbot module for The Reading Room.
+"""RAG chatbot module for Vertex Valet.
 
 Orchestration pipeline:
     user message + history
@@ -122,7 +122,7 @@ def generate_response(message: str, history: list[dict], books: list[dict]) -> s
     client = Groq(api_key=_get_api_key())
 
     system_prompt = (
-        "You are a knowledgeable book recommender assistant for The Reading Room. "
+        "You are a knowledgeable book recommender assistant for Vertex Valet. "
         "Recommend books from the BOOK CATALOG below only.\n\n"
         "STRICT RULES:\n"
         "1. You may ONLY recommend books that appear in the BOOK CATALOG below.\n"

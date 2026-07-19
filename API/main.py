@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import sqlite3
 
-app = FastAPI(title="Books API")
+app = FastAPI(title="Vertex Valet API")
 
 from fastapi.middleware.cors import CORSMiddleware
 

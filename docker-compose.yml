@@ -1,7 +1,7 @@
 services:
-  reading-room-api:
+  vertex-valet-api:
     build: .
-    container_name: reading-room-api
+    container_name: vertex-valet-api
     ports:
       - "8000:8000"
     volumes:

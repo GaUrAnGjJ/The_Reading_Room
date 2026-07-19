@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "=== The Reading Room Startup ==="
+echo "=== Vertex Valet Startup ==="
 echo "Working directory: $(pwd)"
 
 PORT="${PORT:-8000}"
