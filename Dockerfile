@@ -36,8 +36,8 @@ RUN if [ ! -f storage/library.db ]; then echo "Building database..."; python pip
 # Build embeddings if they don't exist
 RUN if [ ! -f recommender/embeddings.pkl ]; then echo "Building embeddings..."; python recommender/build_embeddings.py; fi
 
-# Expose port 8000 for the API
-EXPOSE 8000
+# Expose port 7860 for Hugging Face Spaces (HF default)
+EXPOSE 7860
 
 # Copy and prepare startup script
 COPY start.sh .

@@ -1,15 +1,16 @@
 services:
-  vertex-valet-api:
+  reading-room-api:
     build: .
-    container_name: vertex-valet-api
+    container_name: reading-room-api
     ports:
-      - "8000:8000"
+      - "7860:7860"
     volumes:
       # Mount storage and recommender directories to persist data and embeddings
       - ./storage:/app/storage
       - ./recommender:/app/recommender
     environment:
       - PYTHONUNBUFFERED=1
+      - GROQ_API_KEY=${GROQ_API_KEY}
     command: >
       sh -c "
       if [ ! -f /app/storage/library.db ]; then
@@ -20,17 +21,5 @@ services:
         echo 'Building embeddings...';
         python recommender/build_embeddings.py;
       fi;
-      uvicorn API.main:app --host 0.0.0.0 --port 8000
+      uvicorn API.main:app --host 0.0.0.0 --port 7860
       "
-
-  vertex-valet-frontend:
-    image: python:3.11-slim
-    container_name: vertex-valet-frontend
-    working_dir: /app/frontend
-    volumes:
-      - ./frontend:/app/frontend
-    command: python -m http.server 3000
-    ports:
-      - "3000:3000"
-    depends_on:
-      - vertex-valet-api

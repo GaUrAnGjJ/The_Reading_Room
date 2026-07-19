@@ -4,3 +4,5 @@ storage/library.db filter=lfs diff=lfs merge=lfs -text
 *.pkl filter=lfs diff=lfs merge=lfs -text
 *.db filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
+data/processed/clean_description.csv filter=lfs diff=lfs merge=lfs -text
+data/processed/clean_description_old.csv filter=lfs diff=lfs merge=lfs -text
