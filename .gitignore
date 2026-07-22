@@ -15,8 +15,3 @@ logs/
 ponytail/
 README__.md
 RAG_CHATBOT_IMPLEMENTATION.md
-
-# Large files — hosted on GitHub Releases, downloaded by start.sh at runtime
-recommender/embeddings.pkl
-storage/library.db
-data/processed/

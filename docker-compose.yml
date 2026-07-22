@@ -23,3 +23,15 @@ services:
       fi;
       uvicorn API.main:app --host 0.0.0.0 --port 8000
       "
+
+  vertex-valet-frontend:
+    image: python:3.11-slim
+    container_name: vertex-valet-frontend
+    working_dir: /app/frontend
+    volumes:
+      - ./frontend:/app/frontend
+    command: python -m http.server 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - vertex-valet-api
