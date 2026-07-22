@@ -27,6 +27,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # This prevents downloading it at runtime which causes timeouts
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
+# Configure Streamlit for headless mode (for both API and Streamlit endpoints)
+RUN mkdir -p ~/.streamlit && echo "[client]\nshowErrorDetails = true\n[logger]\nlevel = \"info\"" > ~/.streamlit/config.toml
+
 # Copy the rest of the application code
 COPY . .
 
