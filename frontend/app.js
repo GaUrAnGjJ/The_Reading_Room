@@ -235,3 +235,157 @@ function toggleDescription(event, btn) {
         btn.textContent = 'Show Less';
     }
 }
+
+/* ════════════════════════════════════════════════════════════
+   CHATBOT — RAG-powered Literary Assistant
+   ════════════════════════════════════════════════════════════ */
+
+let chatHistory = [];  // [{role: 'user'|'assistant', content: '...'}]
+let chatIsOpen = false;
+
+// ── Toggle panel open/close ───────────────────────────────────
+function toggleChat() {
+    const panel = document.getElementById('chat-panel');
+    const fab   = document.getElementById('chat-fab');
+
+    chatIsOpen = !chatIsOpen;
+
+    if (chatIsOpen) {
+        panel.classList.remove('hidden');
+        // Force re-run animation by toggling the element
+        panel.style.animation = 'none';
+        requestAnimationFrame(() => {
+            panel.style.animation = '';
+        });
+        fab.classList.add('is-open');
+        fab.innerHTML = '<i class="fa-solid fa-xmark" id="chat-fab-icon"></i>';
+        document.getElementById('chat-input').focus();
+    } else {
+        panel.classList.add('hidden');
+        fab.classList.remove('is-open');
+        fab.innerHTML = '<i class="fa-solid fa-comments" id="chat-fab-icon"></i>';
+    }
+}
+
+// ── Render a single message bubble ───────────────────────────
+function appendMessage(role, text) {
+    const messagesEl = document.getElementById('chat-messages');
+
+    const msg = document.createElement('div');
+    msg.className = `chat-msg ${role}`;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    bubble.textContent = text;
+
+    msg.appendChild(bubble);
+    messagesEl.appendChild(msg);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return msg;
+}
+
+// ── Show animated typing indicator ───────────────────────────
+function showTypingIndicator() {
+    const messagesEl = document.getElementById('chat-messages');
+    const typingMsg = document.createElement('div');
+    typingMsg.className = 'chat-msg assistant typing';
+    typingMsg.id = 'chat-typing-indicator';
+    typingMsg.innerHTML = `
+        <div class="chat-bubble">
+            <div class="typing-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>`;
+    messagesEl.appendChild(typingMsg);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const el = document.getElementById('chat-typing-indicator');
+    if (el) el.remove();
+}
+
+// ── Update status line in the header ─────────────────────────
+function setChatStatus(text) {
+    const el = document.getElementById('chat-status-text');
+    if (el) el.textContent = text;
+}
+
+// ── Send a message (called from button or Enter key) ─────────
+async function sendChatMessage() {
+    const inputEl  = document.getElementById('chat-input');
+    const sendBtn  = document.getElementById('chat-send-btn');
+    const suggestionsEl = document.getElementById('chat-suggestions');
+    const message  = inputEl.value.trim();
+
+    if (!message) return;
+
+    // Hide suggestion chips after first real message
+    if (suggestionsEl) suggestionsEl.style.display = 'none';
+
+    // Render user bubble
+    appendMessage('user', message);
+    chatHistory.push({ role: 'user', content: message });
+
+    // Reset input
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendBtn.disabled = true;
+    setChatStatus('Thinking...');
+    showTypingIndicator();
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: message,
+                history: chatHistory.slice(0, -1)   // send history without the current message
+            })
+        });
+
+        hideTypingIndicator();
+
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
+            throw new Error(err.detail || `HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const reply = data.reply || 'Sorry, I could not generate a response.';
+
+        appendMessage('assistant', reply);
+        chatHistory.push({ role: 'assistant', content: reply });
+        setChatStatus('Ask me to find your next read');
+
+    } catch (error) {
+        hideTypingIndicator();
+        appendMessage('assistant', `⚠️ ${error.message}. Please make sure the backend is running.`);
+        setChatStatus('Error — is the backend running?');
+        console.error('Chat error:', error);
+    } finally {
+        sendBtn.disabled = false;
+        inputEl.focus();
+    }
+}
+
+// ── Suggestion chip handler ───────────────────────────────────
+function sendSuggestion(btn) {
+    const text = btn.textContent.replace(/^[\u{1F300}-\u{1FFFF}] /u, '').trim();
+    document.getElementById('chat-input').value = text;
+    sendChatMessage();
+}
+
+// ── Enter key: send on Enter, newline on Shift+Enter ─────────
+function handleChatKey(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendChatMessage();
+    }
+}
+
+// ── Auto-resize textarea as user types ───────────────────────
+function autoResizeTextarea(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}

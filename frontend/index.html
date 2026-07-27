@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The-Reading-Room - Intelligent Book Search</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,6 +66,64 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         CHATBOT WIDGET
+    ═══════════════════════════════════════════════════ -->
+
+    <!-- Floating Action Button -->
+    <button id="chat-fab" class="chat-fab" onclick="toggleChat()" aria-label="Open book assistant chat">
+        <i class="fa-solid fa-comments" id="chat-fab-icon"></i>
+    </button>
+
+    <!-- Chat Panel -->
+    <div id="chat-panel" class="chat-panel hidden" role="dialog" aria-label="Book assistant chat">
+        <!-- Panel Header -->
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar">📚</div>
+                <div>
+                    <div class="chat-title">Literary Assistant</div>
+                    <div class="chat-status" id="chat-status-text">Ask me to find your next read</div>
+                </div>
+            </div>
+            <button class="chat-close-btn" onclick="toggleChat()" aria-label="Close chat">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chat-messages" class="chat-messages">
+            <div class="chat-msg assistant">
+                <div class="chat-bubble">
+                    Hello! I'm your literary assistant. Tell me what kind of book you're in the mood for and I'll find the perfect match from our library. 📖
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggested Prompts -->
+        <div class="chat-suggestions" id="chat-suggestions">
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">🚀 Space adventure with robots</button>
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">💔 Heartbreaking love story</button>
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">🔮 Dark fantasy epic</button>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <textarea
+                id="chat-input"
+                class="chat-input"
+                placeholder="Describe the book you want..."
+                rows="1"
+                aria-label="Chat message input"
+                onkeydown="handleChatKey(event)"
+                oninput="autoResizeTextarea(this)"
+            ></textarea>
+            <button id="chat-send-btn" class="chat-send-btn" onclick="sendChatMessage()" aria-label="Send message">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
