@@ -531,6 +531,10 @@ GROQ_API_KEY=your_key_here docker-compose up
 ### Book Shelf — Random Exploration
 ![Random Books Shelf](screenshots/shelves.png)
 
+### Chatbot Interface - Conversational AI
+
+![Chatbot Interface](screenshots/Chatbot.png)
+
 ---
 
 ## 🛠️ Technology Stack
