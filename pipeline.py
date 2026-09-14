@@ -30,7 +30,6 @@ def main():
         run_pipeline()
         transformation()
         main_db()
-        app()
         api()
         return
 

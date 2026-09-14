@@ -417,6 +417,9 @@ curl -X POST http://localhost:7860/chat \
 
 ---
 
+## Uvicorn Command to run locally
+```.\venv\Scripts\python.exe -m uvicorn API.main:app --host 127.0.0.1 --port 8000```
+
 ## 🐳 Running with Docker
 
 The Dockerfile handles everything automatically — model download, database init, and startup.
