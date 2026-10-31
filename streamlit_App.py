@@ -7,9 +7,14 @@ Reuses the existing backend modules directly (in-process, no HTTP layer):
     - chat.chatbot.chat                          → RAG chatbot (Groq)
 """
 
+from dotenv import load_dotenv
+load_dotenv()
+
+import base64
 import html
 import os
 import sqlite3
+import urllib.parse
 from pathlib import Path
 
 import numpy as np
@@ -54,6 +59,29 @@ CUSTOM_CSS = """
     background-color: var(--bg-color);
     color: var(--text-primary);
     font-family: var(--font-body);
+}
+
+/* Hide Streamlit default header, toolbar, Share button, star, edit, GitHub icon */
+header[data-testid="stHeader"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+}
+
+[data-testid="stToolbar"],
+[data-testid="stAppDeployButton"],
+.stAppDeployButton,
+#MainMenu,
+footer,
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"],
+[data-testid="stHeaderActionElements"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+.main .block-container {
+    padding-top: 1rem !important;
 }
 
 /* Header Banner */
@@ -138,7 +166,7 @@ CUSTOM_CSS = """
 .book-poster-container {
     width: 100%;
     height: 250px;
-    background: var(--paper-color);
+    background: #231610;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -150,7 +178,9 @@ CUSTOM_CSS = """
 .book-poster {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
     transition: transform 0.4s ease;
 }
 
@@ -315,9 +345,63 @@ def random_books(limit: int = 9) -> list[dict]:
         conn.close()
 
 
+def generate_svg_cover(title: str, author: str) -> str:
+    """Generate a custom gold-foiled book cover when no cover photo exists."""
+    palette = [
+        ("#2c3e50", "#1a252f"),  # Navy
+        ("#4a2c2a", "#2e1817"),  # Deep Burgundy
+        ("#2d4a3e", "#1b3027"),  # Forest Green
+        ("#5c3c1e", "#3a2511"),  # Antique Leather Brown
+        ("#3b2b4d", "#241830"),  # Royal Purple
+    ]
+    color_idx = abs(hash(title)) % len(palette)
+    c1, c2 = palette[color_idx]
+    
+    clean_title = html.escape(title[:45]) + ("..." if len(title) > 45 else "")
+    clean_author = html.escape(author[:28]) + ("..." if len(author) > 28 else "")
+    
+    # Split title cleanly across 2 lines
+    words = clean_title.split()
+    t1, t2 = "", ""
+    for w in words:
+        if len(t1) + len(w) + 1 <= 18 and not t2:
+            t1 = f"{t1} {w}".strip()
+        else:
+            t2 = f"{t2} {w}".strip()
+    if not t1:
+        t1 = clean_title[:18]
+        t2 = clean_title[18:]
+    t2 = t2[:22] + ("..." if len(t2) > 22 else "")
+
+    svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">
+      <defs>
+        <linearGradient id="g_{color_idx}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="{c1}"/>
+          <stop offset="100%" stop-color="{c2}"/>
+        </linearGradient>
+      </defs>
+      <rect width="300" height="420" rx="3" fill="url(#g_{color_idx})"/>
+      <rect x="6" y="0" width="8" height="420" fill="rgba(0,0,0,0.25)"/>
+      <rect x="18" y="18" width="264" height="384" rx="2" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-dasharray="6 3"/>
+      <rect x="22" y="22" width="256" height="376" rx="2" fill="none" stroke="#d4af37" stroke-width="0.8"/>
+      <circle cx="150" cy="68" r="14" fill="none" stroke="#d4af37" stroke-width="1.5"/>
+      <text x="150" y="74" font-family="serif" font-size="16" fill="#d4af37" text-anchor="middle">&#10087;</text>
+      <text x="150" y="150" font-family="Georgia, serif" font-size="18" font-weight="bold" fill="#fffdfa" text-anchor="middle">
+        <tspan x="150" dy="0">{t1}</tspan>
+        <tspan x="150" dy="24">{t2}</tspan>
+      </text>
+      <line x1="75" y1="220" x2="225" y2="220" stroke="#d4af37" stroke-width="1"/>
+      <text x="150" y="258" font-family="Georgia, serif" font-size="15" font-style="italic" fill="#e8d8b8" text-anchor="middle">by {clean_author}</text>
+      <text x="150" y="355" font-family="serif" font-size="10" letter-spacing="3" fill="#d4af37" text-anchor="middle">THE READING ROOM</text>
+    </svg>"""
+    return "data:image/svg+xml;base64," + base64.b64encode(svg.encode("utf-8")).decode("ascii")
+
+
 def render_book_card(book: dict):
-    title = html.escape(str(book.get("title") or "Unknown Title"))
-    author = html.escape(str(book.get("author") or "Unknown Author"))
+    raw_title = str(book.get("title") or "Unknown Title")
+    raw_author = str(book.get("author") or "Unknown Author")
+    title = html.escape(raw_title)
+    author = html.escape(raw_author)
     year = book.get("year")
     
     # Format year safely
@@ -328,16 +412,23 @@ def render_book_card(book: dict):
     else:
         year_str = "Unknown Year"
 
-    isbn = html.escape(str(book.get("isbn") or ""))
+    isbn = str(book.get("isbn") or "").strip()
     desc = html.escape(str(book.get("description") or "No description available."))
     short_desc = desc[:280] + ("..." if len(desc) > 280 else "")
     score = book.get("score")
     poster_url = book.get("poster_url")
     book_url = book.get("book_url")
 
-    # High quality fallback book cover if poster_url is empty or missing
-    fallback_img = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=350&auto=format&fit=crop&q=80"
-    img_src = poster_url.strip() if poster_url and str(poster_url).strip() else fallback_img
+    svg_data_uri = generate_svg_cover(raw_title, raw_author)
+
+    if isbn:
+        img_src = f"https://covers.openlibrary.org/b/isbn/{isbn}-L.jpg?default=false"
+    elif poster_url and str(poster_url).strip():
+        img_src = poster_url.strip()
+        if "covers.openlibrary.org" in img_src and "?" not in img_src:
+            img_src += "?default=false"
+    else:
+        img_src = svg_data_uri
 
     score_badge = ""
     if score is not None:
@@ -354,7 +445,7 @@ def render_book_card(book: dict):
     card_html = f"""
     <div class="book-card">
         <div class="book-poster-container">
-            <img src="{img_src}" alt="{title}" class="book-poster" onerror="this.onerror=null; this.src='{fallback_img}';">
+            <div class="book-poster" style="background-image: url('{img_src}'), url('{svg_data_uri}');" role="img" aria-label="{title}"></div>
         </div>
         <div class="book-info">
             <div class="book-title" title="{title}">{title}</div>

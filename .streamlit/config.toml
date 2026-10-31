@@ -1,13 +1,13 @@
 [theme]
-primaryColor = "#1f77b4"
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f0f2f6"
-textColor = "#262730"
-font = "sans serif"
+primaryColor = "#8b4513"
+backgroundColor = "#fdfbf7"
+secondaryBackgroundColor = "#f4ecd8"
+textColor = "#2c1810"
+font = "serif"
 
 [client]
-showErrorDetails = true
-toolbarMode = "minimal"
+showErrorDetails = false
+toolbarMode = "viewer"
 
 [logger]
 level = "info"
