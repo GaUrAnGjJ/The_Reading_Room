@@ -86,7 +86,17 @@ class BookRecommender:
         # Sort by score descending
         final_results.sort(key=lambda x: x['score'], reverse=True)
         
-        return final_results[:top_k]
+        # Clean any NaN values in metadata dicts to avoid JSON serialization errors
+        cleaned_results = []
+        for item in final_results[:top_k]:
+            cleaned = {}
+            for k, v in item.items():
+                if isinstance(v, float) and (np.isnan(v) or np.isinf(v)):
+                    cleaned[k] = None
+                else:
+                    cleaned[k] = v
+            cleaned_results.append(cleaned)
+        return cleaned_results
 
 if __name__ == "__main__":
     rec = BookRecommender()

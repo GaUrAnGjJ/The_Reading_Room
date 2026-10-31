@@ -361,7 +361,7 @@ def chat_endpoint(request: ChatRequest):
             query=request.message,
             response=result["reply"],
             retrieved_context=[b.get("description", "") for b in result["books"]],
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-20b",
             latency_ms=latency_ms,
             prompt_template="STRICT RULES: only recommend from BOOK CATALOG...",
             trace_metadata={"search_query": result["search_query"]},
