@@ -12,7 +12,6 @@
 [![Precision@20](https://img.shields.io/badge/Precision@20-0.70-2ea44f?style=for-the-badge)](evaluate.py)
 [![Recall@20](https://img.shields.io/badge/Recall@20-0.60-blue?style=for-the-badge)](evaluate.py)
 [![MRR](https://img.shields.io/badge/MRR-0.78-orange?style=for-the-badge)](evaluate.py)
-[![Truthfulness](https://img.shields.io/badge/Truthfulness-100%25-brightgreen?style=for-the-badge)](evaluate.py)
 
 </div>
 
@@ -27,7 +26,7 @@ Traditional bookstore and library search engines fail when users don't remember 
 2. **Author-Boosted Lexical Matching** for instant author and title lookups.
 3. **Retrieval-Augmented Generation (RAG)** (`llama-3.3-70b` / Groq) for conversational, context-grounded recommendations with zero hallucinations.
 4. **Production Web Application** featuring both an interactive Streamlit UI and a high-throughput async FastAPI REST backend.
-5. **Comprehensive Evaluation Suite** measuring Precision@K, Recall@K, Mean Reciprocal Rank (MRR), and LLM-as-a-judge Truthfulness.
+5. **Comprehensive Evaluation Suite** measuring Precision@K, Recall@K, Mean Reciprocal Rank (MRR).
 
 ---
 
@@ -35,9 +34,9 @@ Traditional bookstore and library search engines fail when users don't remember 
 
 <div align="center">
 
-| 🎯 Precision@20 | 📥 Recall@20 | ⚡ Mean Reciprocal Rank (MRR) | 🛡️ Truthfulness |
-| :---: | :---: | :---: | :---: |
-| **`0.70`** *(70.0%)* | **`0.60`** *(60.0%)* | **`0.78`** | **`100%`** *(Zero Hallucination)* |
+| 🎯 Precision@20 | 📥 Recall@20 | ⚡ Mean Reciprocal Rank (MRR) |
+| :---: | :---: | :---: |
+| **`0.70`** *(70.0%)* | **`0.60`** *(60.0%)* | **`0.78`** |
 
 </div>
 
@@ -46,7 +45,6 @@ Traditional bookstore and library search engines fail when users don't remember 
 > - **Precision@20 = 0.70 (70%)**: Out of top 20 retrieved candidates, 70% of recommendations match queried themes, categories, and author metadata.
 > - **Recall@20 = 0.60 (60%)**: Recovers 60% of all relevant catalog titles within the top-20 search results.
 > - **MRR = 0.78**: The first relevant book is placed at an average rank between **#1** and **#2** ($\text{rank} \approx 1.28$).
-> - **Truthfulness = 100%**: Zero external hallucinated books or false claims; 100% of generated responses are strictly grounded in retrieved catalog text (verified via Groq LLM-as-a-judge & entity extraction).
 
 ---
 
@@ -75,7 +73,7 @@ The Reading Room follows a modular, decoupled architecture consisting of **Data 
 │                     ┌────────────────────────────┴───────────────────────────┐          │
 │                     ▼                                                        ▼          │
 │        [ RAG Chatbot Pipeline ]                                     [ Evaluation Suite] │
-│   Query Rewrite ──▶ Retrieval ──▶ LLM (Groq)                   P@K, R@K, MRR, Truth     │
+│   Query Rewrite ──▶ Retrieval ──▶ LLM (Groq)                   P@K, R@K, MRR            │
 │   Strict Guardrail ──▶ Grounded Response                       (evaluate.py)            │
 │                     │                                                                   │
 │   [ DUAL INTERFACES ]                                                                   │
@@ -145,7 +143,7 @@ Async endpoints powered by FastAPI and Uvicorn:
 
 ## 📊 RAG & Retrieval Evaluation
 
-The project features a standalone evaluation framework located in [`evaluation/`](evaluation/) with CLI entrypoint [`evaluate.py`](evaluate.py). It quantitatively benchmarks both Information Retrieval (recommender) and Generation (LLM grounding):
+The project features a standalone evaluation framework located in [`evaluation/`](evaluation/) with CLI entrypoint [`evaluate.py`](evaluate.py). It quantitatively benchmarks Information Retrieval (recommender) performance and catalog citation accuracy:
 
 ```bash
 python evaluate.py --k 1 3 5 20
@@ -158,7 +156,6 @@ python evaluate.py --k 1 3 5 20
 | **Precision@20** | **`0.70`** *(70.0%)* | Retrieval | 7 out of 10 returned candidates in top-20 are relevant |
 | **Recall@20** | **`0.60`** *(60.0%)* | Retrieval | Recovers 60% of all relevant catalog titles within top-20 |
 | **Mean Reciprocal Rank (MRR)** | **`0.78`** | Ranking | Mean reciprocal position of the first hit ($\text{rank} \approx 1.28$) |
-| **Truthfulness / Faithfulness** | **`100.0%`** | Generation | Zero hallucinations; all claims supported by retrieved context |
 | **Citation Accuracy** | **`100.0%`** | Grounding | 100% of cited book titles/authors exist in retrieved context |
 | **Guardrail Adherence** | **`100.0%`** | Safety | Immediate rejection of math calculations and off-topic trivia |
 | **Precision@1** | **`62.5%`** | Retrieval | Probability that the very first book returned is an exact hit |
@@ -177,8 +174,7 @@ Detailed query logs & per-case scores are exported to [`evaluation/results/evalu
 3. **Mean Reciprocal Rank (MRR)**: Measures how high the first correct result appears:
    $$\text{MRR} = \frac{1}{|Q|} \sum_{i=1}^{|Q|} \frac{1}{\text{rank}_i}$$
 
-4. **Truthfulness (Faithfulness)**: Measured via an **LLM-as-a-judge** auditor + entity citation parser. Evaluates whether every factual claim made by the assistant is traceable to the retrieved context chunks:
-   $$\text{Truthfulness} = \frac{\text{Supported Claims}}{\text{Total Claims}} \in [0.0, 1.0]$$
+
 
 ---
 
@@ -268,7 +264,7 @@ The_reading_room/
 │   └── embeddings.pkl           # Precomputed vectors (~80 MB, tracked with Git LFS)
 │
 ├── 📂 evaluation/                # Quantitative evaluation framework
-│   ├── metrics.py               # Precision@K, Recall@K, MRR, Truthfulness
+│   ├── metrics.py               # Precision@K, Recall@K, MRR
 │   ├── dataset.py               # Curated 20-query benchmark dataset
 │   ├── evaluator.py             # RAGEvaluator benchmark orchestrator
 │   └── results/                 # Auto-generated JSON and Markdown reports
