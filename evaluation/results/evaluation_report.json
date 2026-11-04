@@ -1,0 +1,851 @@
+{
+  "timestamp": "2026-11-04 21:20:02",
+  "aggregate_metrics": {
+    "total_queries": 20,
+    "in_scope_queries": 16,
+    "out_of_scope_queries": 4,
+    "mean_precision@1": 0.625,
+    "mean_recall@1": 0.3281,
+    "mean_precision@3": 0.3333,
+    "mean_recall@3": 0.5781,
+    "mean_precision@5": 0.25,
+    "mean_recall@5": 0.6562,
+    "MRR": 0.7812,
+    "mean_truthfulness": 1.0,
+    "mean_citation_accuracy": 1.0,
+    "guardrail_accuracy": 1.0
+  },
+  "query_details": [
+    {
+      "id": "q1",
+      "category": "Data Mining",
+      "query": "principles of data mining and knowledge discovery",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "9783540410669",
+        "026208290X",
+        "9781846287657"
+      ],
+      "retrieved_isbns": [
+        "9781846287657",
+        "9780387244358",
+        "9783540664581",
+        "3540664297",
+        "0321321367"
+      ],
+      "retrieved_titles": [
+        "Principles of data mining",
+        "Data mining and knowledge discovery handbook",
+        "Data Warehousing and Knowledge Discovery",
+        "Focusing solutions for data mining : analytical studies and experimental results in real-world domains",
+        "Introduction to data mining"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.3333333333333333,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 0.3333333333333333,
+        "precision@5": 0.2,
+        "recall@5": 0.3333333333333333,
+        "reciprocal_rank": 1.0
+      },
+      "response": "It sounds like you\u2019re looking for a solid introduction to the core ideas and techniques of data mining and knowledge discovery. Two titles in our catalog fit that description very well:\n\n1. **\u201cPrinciples of Data Mining\u201d by Bramer Max**  \n   *Why it fits:* This book explains and explores the principal techniques of data mining for classification, generation of association rules, and clustering. It\u2019s written for readers without a strong background in mathematics or statistics, making it a great starting point for grasping the foundational concepts.\n\n2. **\u201cData Mining and Knowledge Discovery Handbook\u201d by Maimon Oded Z**  \n   *Why it fits:* This handbook organizes all major concepts, theories, methodologies, trends, challenges, and applications of data mining and knowledge discovery. It surveys the field and then provides concise algorithmic descriptions of classic and novel methods, giving a comprehensive view of both principles and practical applications.\n\nBoth books should give you a thorough grounding in the principles of data mining and the broader field of knowledge discovery. Let me know if you\u2019d like more details or another recommendation!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 2.09
+    },
+    {
+      "id": "q2",
+      "category": "Data Warehousing",
+      "query": "data warehousing and knowledge discovery proceedings",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "9783540664581"
+      ],
+      "retrieved_isbns": [
+        "9783540664581",
+        "8120320689",
+        "9780072119213",
+        "9788131722046",
+        "8177225847"
+      ],
+      "retrieved_titles": [
+        "Data Warehousing and Knowledge Discovery",
+        "Data warehousing : concepts, techniques,products and applications",
+        "SQL server 7 : data warehousing",
+        "Data warehousing : architecture and implementation",
+        "Data warehousing using oracle"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 1.0,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 1.0,
+        "precision@5": 0.2,
+        "recall@5": 1.0,
+        "reciprocal_rank": 1.0
+      },
+      "response": "**Data Warehousing and Knowledge Discovery**  \n*Author:* Mohania Mukesh (1999)  \n*Description:* This book is the refereed proceedings of the First International Conference on Data Warehousing and Knowledge Discovery (DaWaK'99), held in Florence, Italy in August\u2011September 1999. It contains 31 revised full papers and nine short papers that were carefully reviewed and selected from 88 submissions. The volume is organized into topical sections covering data warehouse design, online analytical processing, and related subjects.  \n\nIf you\u2019re looking for a comprehensive collection of research papers on data warehousing and knowledge discovery from a leading conference, this is the exact volume you need.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 2.09
+    },
+    {
+      "id": "q3",
+      "category": "Neural Networks",
+      "query": "artificial neural networks and computational intelligence",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "8120312538",
+        "9789812706249",
+        "9788120332294"
+      ],
+      "retrieved_isbns": [
+        "9781259002373",
+        "9783540605058",
+        "9780195111620",
+        "8120312538",
+        "8172242662"
+      ],
+      "retrieved_titles": [
+        "Artificial neural networks",
+        "Neural networks : a systematic introduction",
+        "Neural networks and intellect : Usibg model-based concepts",
+        "Artificial neural networks",
+        "Introduction to Artificial Neural Systems"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "precision@3": 0.0,
+        "recall@3": 0.0,
+        "precision@5": 0.2,
+        "recall@5": 0.3333333333333333,
+        "reciprocal_rank": 0.25
+      },
+      "response": "Hello! If you\u2019re interested in artificial neural networks and the broader field of computational intelligence, I\u2019d recommend the following titles from our catalog:\n\n1. **\u201cArtificial neural networks\u201d by Schalkoff Robert J. (2011)**  \n   *Why it fits:* This book presents the core ideas, techniques, and applications that characterize the emerging field of artificial neural networks. It is aimed at beginning graduate and advanced undergraduate students as well as practicing engineers and scientists, making it a solid foundation for understanding how neural networks contribute to computational intelligence.\n\n2. **\u201cArtificial neural networks\u201d by Yegnanarayana B. (2001)**  \n   *Why it fits:* Designed as an introductory textbook for postgraduate and senior undergraduate levels, this volume highlights the need for new computing models based on neural network principles. It offers a well\u2011organized overview that is essential for grasping how neural networks underpin many computational intelligence methods.\n\n3. **\u201cNeural networks : a systematic introduction\u201d by Rojas Raul (1996)**  \n   *Why it fits:* This book brings together theoretical laws and models from the scattered literature into a general theory of artificial neural nets. It starts with simple nets and explores how properties change with more general computing models, providing a clear view of the computational aspects of neural networks.\n\nThese titles all focus on artificial neural networks and provide the theoretical and practical background that is central to computational intelligence. If you\u2019d like more details or have a specific angle you\u2019re exploring, just let me know!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 3.99
+    },
+    {
+      "id": "q4",
+      "category": "Software Process",
+      "query": "software process and engineering methodologies",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "9783540655169",
+        "3540661573",
+        "3540658661"
+      ],
+      "retrieved_isbns": [
+        "9780070647770",
+        "8129703092",
+        "0387242619",
+        "9783540655169",
+        "047168418X"
+      ],
+      "retrieved_titles": [
+        "Software engineering",
+        "Software engineering process with the UPEDU",
+        "Software process modeling",
+        "Software Process",
+        "Software Engineering : the supporting processes. Volume 2"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "precision@3": 0.0,
+        "recall@3": 0.0,
+        "precision@5": 0.2,
+        "recall@5": 0.3333333333333333,
+        "reciprocal_rank": 0.25
+      },
+      "response": "Hello! If you\u2019re looking for books that cover software process and engineering methodologies, here are a few titles from our catalog that should be a great fit:\n\n| # | Title | Why it fits |\n|---|-------|-------------|\n| 1 | **\u201cSoftware engineering\u201d by Schach Stephen R** | This book introduces the fundamentals of software engineering, covering both traditional and object\u2011oriented techniques. It uses the Unified Process model and aligns with ISO IEC\u202f12207 standards, giving you a solid foundation in established methodologies. |\n| 2 | **\u201cSoftware process modeling\u201d by Juristo Natalia** | Focused specifically on process modeling, this title discusses socio\u2011technological aspects, open\u2011source development, and organizational change\u2014key topics when exploring modern engineering practices. |\n| 3 | **\u201cSoftware Process\u201d by Derniame Jean Claude** | It presents software process technology as a strategic area, offering tools for modeling, analyzing, improving, and measuring processes. It\u2019s ideal if you want practical guidance on process improvement. |\n| 4 | **\u201cSoftware engineering process with the UPEDU\u201d by Robillard Pierre N** | This book gives a broad introduction to the software development process, covering methods, tools, and life\u2011cycle concepts, and then delves into engineering and management disciplines. |\n| 5 | **\u201cSoftware Engineering : the supporting processes. Volume\u202f2\u201d by Dorfman Merlin** | As part of a tutorial series, this volume focuses on supporting life\u2011cycle processes, providing detailed papers on the processes that underpin software engineering. |\n\nFeel free to let me know which of these interests you most, or if you\u2019d like a deeper dive into a particular aspect of software process and engineering methodologies!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 2.82
+    },
+    {
+      "id": "q5",
+      "category": "Workflow Management",
+      "query": "workflow management systems for process organizations",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "354065304X"
+      ],
+      "retrieved_isbns": [
+        "9780262011891",
+        "354065304X",
+        "8184040105",
+        "9781846285196",
+        "9783642015878"
+      ],
+      "retrieved_titles": [
+        "Workflow management: Models, methods and systems",
+        "Workflow Management Systems for Process Organizations",
+        "Essential business process modeling",
+        "Workflows for eScience : scientific workflows for grids",
+        "Business process technology : a unified view on business processes, workflows and enterprise applications"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 1.0,
+        "precision@5": 0.2,
+        "recall@5": 1.0,
+        "reciprocal_rank": 0.5
+      },
+      "response": "Hello! It sounds like you\u2019re looking for a book that dives into workflow management systems tailored for process organizations. I recommend:\n\n**[2] \u201cWorkflow Management Systems for Process Organizations\u201d by Schael Thomas (1998)**  \n*Why it fits:* The book is specifically titled to address workflow management systems in process organizations. It discusses the growing international interest in the topic, highlights the evolution from the first to the second edition, and brings updated literature and results to readers. This makes it a focused resource for understanding how workflow systems can be designed, implemented, and improved within process-oriented organizations.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 6.46
+    },
+    {
+      "id": "q6",
+      "category": "Conceptual Modeling",
+      "query": "conceptual modeling for user interface design",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "1852330090",
+        "9783540659266"
+      ],
+      "retrieved_isbns": [
+        "1852330090",
+        "0201657899",
+        "8126502134",
+        "1578701015",
+        "0849331250"
+      ],
+      "retrieved_titles": [
+        "Conceptual modeling for user interface development",
+        "Object Modeling and User Interface Design",
+        "Essentials of User Interface Design",
+        "Designing for the user with OVID : bridging user interface design and software engineering",
+        "User interface design : bridging the gap from user requirements to design"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.5,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 0.5,
+        "precision@5": 0.2,
+        "recall@5": 0.5,
+        "reciprocal_rank": 1.0
+      },
+      "response": "Hello! It sounds like you\u2019re interested in **Conceptual Modeling for User Interface Development** by David Benyon. This book is a great fit because it specifically introduces the Entity\u2011Relationship\u2011Modeling technique and shows how it can be applied to interface issues. It explains the aspects of ER modeling relevant to interface designers and presents extensions to the notation needed for modeling interfaces\u2014exactly what you\u2019re looking for. If you\u2019d like more details or another recommendation, just let me know!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 12.96
+    },
+    {
+      "id": "q7",
+      "category": "Computer Networks",
+      "query": "network design management and technical perspectives",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "0849334047"
+      ],
+      "retrieved_isbns": [
+        "0849334047",
+        "9780201357424",
+        "9780849316081",
+        "8181473655",
+        "0130329509"
+      ],
+      "retrieved_titles": [
+        "Network design : management and technical perspectives",
+        "Network Management",
+        "Network Design : management and technical perspectives",
+        "Network Analysis, Architecture and Design",
+        "Network Management : concepts and practice, a hands-on approach"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 1.0,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 1.0,
+        "precision@5": 0.2,
+        "recall@5": 1.0,
+        "reciprocal_rank": 1.0
+      },
+      "response": "Hello! It sounds like you\u2019re looking for a book on network design, management, and technical perspectives.  \nHere are the titles in our catalog that match that description:\n\n1. **\u201cNetwork design : management and technical perspectives\u201d** by Mann Rubinson Teresa\u202fC. (1999)  \n   *Why it fits:* This book is specifically aimed at network management and design professionals, outlining basic techniques, reviewing major challenges, summarizing prevailing approaches and technologies, and describing the specification, design, and planning of data network topologies.\n\n2. **\u201cNetwork Design : management and technical perspectives\u201d** by Piliouras Teresa\u202fC. (2004)  \n   *Why it fits:* The second edition provides a broad survey of major technologies and networking protocols, explaining how they interrelate, integrate, migrate, and substitute, which is essential for understanding both management and technical aspects of network design.\n\nBoth books should give you a solid foundation in the principles and practical aspects of network design and management. Let me know if you\u2019d like more details or help with another request!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 15.31
+    },
+    {
+      "id": "q8",
+      "category": "Multimedia Systems",
+      "query": "multimedia information analysis and retrieval proceedings",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "9783540648260",
+        "1852332484",
+        "9783540660828"
+      ],
+      "retrieved_isbns": [
+        "9780387765679",
+        "9783540648260",
+        "9783540728948",
+        "0415136660",
+        "8178083191"
+      ],
+      "retrieved_titles": [
+        "Multimedia content analysis : theory and applications",
+        "Multimedia information analysis and retrieval : IAPR International Workshop MINAR?98, Hong Kong, China, August 1998, proceedings",
+        "Multimedia retrieval",
+        "Multimedia handbook",
+        "Multimedia : computing, communications and applications"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 0.3333333333333333,
+        "precision@5": 0.2,
+        "recall@5": 0.3333333333333333,
+        "reciprocal_rank": 0.5
+      },
+      "response": "**Multimedia information analysis and retrieval**  \n*IAPR International Workshop MINAR?98, Hong Kong, China, August 1998, proceedings*  \nby **IP Horace H.\u202fS.** (1998)\n\nThis book is the exact proceedings you\u2019re looking for. It contains the 18 revised papers that were carefully reviewed and selected for the workshop, plus two invited presentations. The topics span invariant image and video analysis, feature extraction, and retrieval techniques\u2014making it a comprehensive resource for anyone interested in the state of multimedia information analysis and retrieval as of 1998.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 15.15
+    },
+    {
+      "id": "q9",
+      "category": "Information Systems",
+      "query": "visual information and information systems",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "9783540660798"
+      ],
+      "retrieved_isbns": [
+        "9780201596267",
+        "9783540660798",
+        "1852337893",
+        "1558605339",
+        "9780961392116"
+      ],
+      "retrieved_titles": [
+        "Information Visualization",
+        "Visual information and information systems : Third International Conference, VISUAL '99, Amsterdam, The Netherlands, June 2-4, 1999 : proceedings",
+        "Information visualization : beyond the horizon",
+        "Readings in information visualization: Using vision to think",
+        "Envisioning information"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 1.0,
+        "precision@5": 0.2,
+        "recall@5": 1.0,
+        "reciprocal_rank": 0.5
+      },
+      "response": "It looks like you\u2019re interested in the topic of visual information and information systems.  \nA perfect match from our catalog is:\n\n**[2] \u201cVisual information and information systems : Third International Conference, VISUAL '99, Amsterdam, The Netherlands, June 2-4, 1999 : proceedings\u201d**  \n\n*Why it fits:*  \n- The title itself focuses on visual information systems, exactly matching your interest.  \n- It contains the refereed proceedings of the Third International Conference on Visual Information Systems, offering a collection of 100 revised papers that cover a wide range of topics such as interactive visual query and Internet search engines.  \n- The book is organized into topical sections, providing a comprehensive overview of the field as it stood in 1999.  \n\nFeel free to let me know if you\u2019d like more details or another recommendation!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 16.47
+    },
+    {
+      "id": "q10",
+      "category": "Applied Mathematics",
+      "query": "applied complex variables for scientists and engineers",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "9780521004626"
+      ],
+      "retrieved_isbns": [
+        "9780817640118",
+        "9780521004626",
+        "0486639266",
+        "9780198509837",
+        "9780073051949"
+      ],
+      "retrieved_titles": [
+        "Handbook of complex variables",
+        "Applied complex variables for scientists and engineers",
+        "Complex variables and the Laplace transform for engineers",
+        "Complex variables for scientists and engineers : an introduction",
+        "Complex Variables and Applications"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 1.0,
+        "precision@5": 0.2,
+        "recall@5": 1.0,
+        "reciprocal_rank": 0.5
+      },
+      "response": "**Applied Complex Variables for Scientists and Engineers**  \n*Author:* Kwok, Yue Kuen (2002)  \n\n**Description from the catalog:**  \n> This is an introduction to complex variable methods for scientists and engineers. It begins by carefully defining complex numbers and analytic functions, and proceeds to give accounts of complex integration, Taylor series, singularities, residues and mappings. Both algebraic and geometric tools are employed to provide the greatest understanding, with many diagrams illustrating the concepts.  \n\nIf you\u2019d like a recommendation for a similar book from our catalog, just let me know!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 13.03
+    },
+    {
+      "id": "q11",
+      "category": "Cosmology / Physics",
+      "query": "brief history of time big bang to black holes",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "0553176986",
+        "9788179925911"
+      ],
+      "retrieved_isbns": [
+        "0553176986",
+        "0863113338",
+        "9789814425698",
+        "9780553406634",
+        "9780007162208"
+      ],
+      "retrieved_titles": [
+        "Brief history of time : from the big bang to black holes",
+        "At the Speed of Light",
+        "Black holes : new horizons",
+        "Black Holes and Baby Universes and Other Essays",
+        "Big bang : the origin of the universe"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.5,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 0.5,
+        "precision@5": 0.2,
+        "recall@5": 0.5,
+        "reciprocal_rank": 1.0
+      },
+      "response": "**Brief History of Time : From the Big Bang to Black Holes**  \n*Author: Stephen Hawking (1988)*  \n\nIn the ten years since its publication, Stephen Hawking\u2019s classic has become a landmark in scientific writing, selling over nine million copies in forty languages worldwide. This edition was on the cutting edge of what was then known about the origins and nature of the universe. It traces the journey from the Big Bang through the development of stars and galaxies, to the mysterious black holes that warp space\u2011time, offering a clear, engaging narrative of modern cosmology.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 16.76
+    },
+    {
+      "id": "q12",
+      "category": "Romance / Human Relationships",
+      "query": "tales of love passion and human erotic desire",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "0195630262",
+        "9780195643770"
+      ],
+      "retrieved_isbns": [
+        "0195630262",
+        "9780374526511",
+        "9780141186030",
+        "9780226505374",
+        "0195202503"
+      ],
+      "retrieved_titles": [
+        "Tales of Love, Sex and Danger",
+        "Erotic tales",
+        "The psychology of love",
+        "Erotic phenomenon",
+        "Siva : the erotic ascetic"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.5,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 0.5,
+        "precision@5": 0.2,
+        "recall@5": 0.5,
+        "reciprocal_rank": 1.0
+      },
+      "response": "Hello! Based on your interest in tales of love, passion, and human erotic desire, I\u2019d recommend the following books from our catalog:\n\n1. **\u201cTales of Love, Sex and Danger\u201d by Kakar Sudhir**  \n   *Why it fits:* This book explores the complexities of love and the nature of erotic passion as they appear in great love stories worldwide. It\u2019s specifically focused on romantic and erotic themes, making it a perfect match for your interests.\n\n2. **\u201cErotic Tales\u201d by Moravia Alberto**  \n   *Why it fits:* This collection contains twenty erotic stories featuring eccentric characters and recurring themes of sexual yearning and desire. It directly addresses the erotic aspect you\u2019re looking for.\n\nBoth titles delve into the emotional and sensual dimensions of love and desire, offering engaging narratives that align with your request. Enjoy your reading!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 14.67
+    },
+    {
+      "id": "q13",
+      "category": "Indian History",
+      "query": "history of early and ancient india",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "0140138358",
+        "9780140138368",
+        "019564445X",
+        "0195633423"
+      ],
+      "retrieved_isbns": [
+        "0140138358",
+        "9780195667141",
+        "9780198078807",
+        "9780140138368",
+        "9788131711200"
+      ],
+      "retrieved_titles": [
+        "History of India",
+        "India's ancient past",
+        "India : brief history of a civilization",
+        "History of India",
+        "History of ancient and early medieval India : from the Stone Age to the 12th century"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.25,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 0.25,
+        "precision@5": 0.4,
+        "recall@5": 0.5,
+        "reciprocal_rank": 1.0
+      },
+      "response": "Hello! If you\u2019re looking to explore the early and ancient periods of India, here are a few titles from our catalog that focus on that era:\n\n1. **\u201cHistory of ancient and early medieval India : from the Stone Age to the 12th century\u201d by Singh Upinder**  \n   *Why it fits:* This book is described as a comprehensive introductory work that covers the entire span from the Stone Age up to the 12th century, providing an exhaustive overview of ancient and early medieval Indian history.\n\n2. **\u201cHistory of India\u201d by Thapar Romila**  \n   *Why it fits:* The description notes that it covers India\u2019s early history from the ascendance of Aryan culture around 1000\u202fBC up to the arrival of the first European trading companies, giving a clear focus on the early period.\n\n3. **\u201cHistory of India\u201d by Spear Percival**  \n   *Why it fits:* The first volume traces the evolution of India before contact with modern Europe in the sixteenth century, highlighting early cultural manifestations in religion, art, literature, and institutions.\n\n4. **\u201cIndia's ancient past\u201d by Sharma R.\u202fS.**  \n   *Why it fits:* This volume is specifically aimed at those interested in ancient India, addressing contemporary issues such as the identity of the Aryan culture and historical construction.\n\nAny of these titles would provide a solid foundation for studying early and ancient Indian history. Let me know if you\u2019d like more details or help locating one of these books!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 17.96
+    },
+    {
+      "id": "q14",
+      "category": "Philosophy",
+      "query": "oxford dictionary of philosophy",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "0192831348",
+        "9780198751656"
+      ],
+      "retrieved_isbns": [
+        "0192831348",
+        "9780521637220",
+        "9780199552238",
+        "0826472427",
+        "9780691138701"
+      ],
+      "retrieved_titles": [
+        "Oxford dictionary of philosophy",
+        "Cambridge Dictionary of Philosophy",
+        "Oxford handbook of philosophy of language",
+        "What philosophy is : contemporary philosophy in action",
+        "Dictionary of untranslatables : a philosophical lexicon"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.5,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 0.5,
+        "precision@5": 0.2,
+        "recall@5": 0.5,
+        "reciprocal_rank": 1.0
+      },
+      "response": "**Oxford Dictionary of Philosophy**  \n*Author:* Blackburn, Simon  \n*Publication Year:* 1996  \n\nDescription: From Aristotle to Zen, this is the most comprehensive, authoritative, and up\u2011to\u2011date dictionary of philosophy available. Ideal for students or a general readership, it provides lively and accessible coverage of not only the Western philosophical tradition but also important themes from Chinese, Indian, Islamic, and Jewish philosophy. It contains 2,500 entries, including the most recent terms and concepts.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 12.35
+    },
+    {
+      "id": "q15",
+      "category": "Author Search",
+      "query": "kakar sudhir",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "0195630262",
+        "9780195696684",
+        "9780195615081"
+      ],
+      "retrieved_isbns": [
+        "9780195696684",
+        "0195630262",
+        "9780195627930",
+        "9780195631593",
+        "9780140272499"
+      ],
+      "retrieved_titles": [
+        "Culture and Psyche: Selected Essays",
+        "Tales of Love, Sex and Danger",
+        "Shamans, Mystics and Doctors",
+        "Identity and Adulthood",
+        "Ascetic of desire : a novel"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.3333333333333333,
+        "precision@3": 0.6666666666666666,
+        "recall@3": 0.6666666666666666,
+        "precision@5": 0.4,
+        "recall@5": 0.6666666666666666,
+        "reciprocal_rank": 1.0
+      },
+      "response": "Hello! I\u2019m here to help you explore the works of **Kakar Sudhir** in our catalog.  \nWould you like a brief overview of his books, or are you looking for a recommendation that fits a particular theme or interest? Let me know how I can assist you!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 13.95
+    },
+    {
+      "id": "q16",
+      "category": "Author Search",
+      "query": "thapar romila",
+      "is_out_of_scope": false,
+      "relevant_isbns": [
+        "0140138358",
+        "019564445X",
+        "9780195651775"
+      ],
+      "retrieved_isbns": [
+        "0140138358",
+        "019564445X",
+        "0195633423",
+        "9780195651775",
+        "9780195626759"
+      ],
+      "retrieved_titles": [
+        "History of India",
+        "Asoka and the Decline of the Mauryas",
+        "Interpreting Early India",
+        "Narratives and the Making of History",
+        "From Lineage to State"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.3333333333333333,
+        "precision@3": 0.6666666666666666,
+        "recall@3": 0.6666666666666666,
+        "precision@5": 0.6,
+        "recall@5": 1.0,
+        "reciprocal_rank": 1.0
+      },
+      "response": "Hello! I see you\u2019re interested in works by Romila Thapar. How can I help you today? If you\u2019d like a recommendation or more details about a particular book, just let me know!",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "All cited titles are verified in retrieved context.",
+        "method": "rule_based_grounding"
+      },
+      "latency_seconds": 12.61
+    },
+    {
+      "id": "q17",
+      "category": "Math Guardrail",
+      "query": "calculate 45 * 80 + 12",
+      "is_out_of_scope": true,
+      "relevant_isbns": [],
+      "retrieved_isbns": [
+        "1568811608",
+        "9788122200386",
+        "8120819624",
+        "9812380647",
+        "9788122200065"
+      ],
+      "retrieved_titles": [
+        "Computer Arithmetic Algorithms",
+        "Figuring : the joy of numbers",
+        "Natural calculator",
+        "Counting",
+        "Book of numbers : everything you always wanted to know about numbers but was difficult to understand"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 1.0,
+        "precision@3": 0.0,
+        "recall@3": 1.0,
+        "precision@5": 0.0,
+        "recall@5": 1.0,
+        "reciprocal_rank": 1.0
+      },
+      "response": "I do not contain this information. I am a specialized book assistant and can only answer questions or provide recommendations based on the books in our library catalog.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "Correctly rejected out-of-scope query without hallucination.",
+        "method": "guardrail_verification"
+      },
+      "latency_seconds": 0.07
+    },
+    {
+      "id": "q18",
+      "category": "Math Guardrail",
+      "query": "what is the derivative of x^3 + 2x^2 - 5?",
+      "is_out_of_scope": true,
+      "relevant_isbns": [],
+      "retrieved_isbns": [
+        "9780898716597",
+        "9810249047",
+        "9780534359485",
+        "9780486404530",
+        "8173714061"
+      ],
+      "retrieved_titles": [
+        "Evaluating derivatives : principles and techniques of algorithmic differentiation",
+        "Calculus : the elements",
+        "Multivariable Calculus",
+        "Calculus : an intuitive and physical approach",
+        "How to enjoy calculus"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 1.0,
+        "precision@3": 0.0,
+        "recall@3": 1.0,
+        "precision@5": 0.0,
+        "recall@5": 1.0,
+        "reciprocal_rank": 1.0
+      },
+      "response": "I do not contain this information. I am a specialized book assistant and can only answer questions or provide recommendations based on the books in our library catalog.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "Correctly rejected out-of-scope query without hallucination.",
+        "method": "guardrail_verification"
+      },
+      "latency_seconds": 0.07
+    },
+    {
+      "id": "q19",
+      "category": "General Knowledge Guardrail",
+      "query": "who won the 2022 FIFA World Cup in football?",
+      "is_out_of_scope": true,
+      "relevant_isbns": [],
+      "retrieved_isbns": [
+        "0312890133",
+        "9781591391852",
+        "9781846142680",
+        "9783540205272",
+        "9780230630093"
+      ],
+      "retrieved_titles": [
+        "White Queen",
+        "Seeing what's next : using the theories of innovation to predict industry change",
+        "Physics of the future : how science will shape human destiny and our daily lives by the year 2100",
+        "Formal Methods at the Crossroads : From Panacea to Foundational Support : 10th anniversary colloquium of UNU/IIST, the International Institute for Software Technology of the United Nations University, Lisbon, Portugal, March 18-20, 2002 : revised pap",
+        "Wisden history of the cricket World Cup"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 1.0,
+        "precision@3": 0.0,
+        "recall@3": 1.0,
+        "precision@5": 0.0,
+        "recall@5": 1.0,
+        "reciprocal_rank": 1.0
+      },
+      "response": "I do not contain this information. I am a specialized book assistant and can only answer questions or provide recommendations based on the books in our library catalog.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "Correctly rejected out-of-scope query without hallucination.",
+        "method": "guardrail_verification"
+      },
+      "latency_seconds": 9.97
+    },
+    {
+      "id": "q20",
+      "category": "Math Guardrail",
+      "query": "solve 1500 / 25",
+      "is_out_of_scope": true,
+      "relevant_isbns": [],
+      "retrieved_isbns": [
+        "9780387982199",
+        "0766802302",
+        "0827374151",
+        "9789813209824",
+        "0521846781"
+      ],
+      "retrieved_titles": [
+        "Problem-Solving Strategies",
+        "College Mathematics through Applications",
+        "Technical calculus with analytical geometry",
+        "Teaching children to love problem solving : a reference from birth through adulthood",
+        "Introduction to programming with mathematica"
+      ],
+      "retrieval_metrics": {
+        "precision@1": 0.0,
+        "recall@1": 1.0,
+        "precision@3": 0.0,
+        "recall@3": 1.0,
+        "precision@5": 0.0,
+        "recall@5": 1.0,
+        "reciprocal_rank": 1.0
+      },
+      "response": "I do not contain this information. I am a specialized book assistant and can only answer questions or provide recommendations based on the books in our library catalog.",
+      "truthfulness": {
+        "truthfulness_score": 1.0,
+        "citation_accuracy": 1.0,
+        "ungrounded_entities": [],
+        "reasoning": "Correctly rejected out-of-scope query without hallucination.",
+        "method": "guardrail_verification"
+      },
+      "latency_seconds": 0.08
+    }
+  ]
+}

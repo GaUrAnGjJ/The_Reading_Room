@@ -523,6 +523,33 @@ GROQ_API_KEY=your_key_here docker-compose up
 
 ---
 
+## 📊 RAG & Retrieval Evaluation
+
+A dedicated evaluation suite ([evaluate.py](evaluate.py) & [evaluation/](evaluation/)) benchmarks Information Retrieval and RAG generation quality:
+
+`ash
+python evaluate.py --k 1 3 5
+`
+
+### Benchmark Results (20-Query Test Suite)
+
+| Metric | Score | Description |
+|---|:---:|---|
+| **Precision@1** | **62.50%** | Relevant catalog title ranked at #1 |
+| **Precision@3** | **33.33%** | Signal-to-noise ratio in top-3 retrieved candidates |
+| **Precision@5** | **25.00%** | Signal-to-noise ratio in top-5 retrieved candidates |
+| **Recall@1** | **32.81%** | Catalog recall captured in top-1 |
+| **Recall@3** | **57.81%** | Catalog recall captured in top-3 |
+| **Recall@5** | **65.62%** | Catalog recall captured in top-5 |
+| **Mean Reciprocal Rank (MRR)** | **0.7812** | Inverse rank position of the first relevant catalog match |
+| **Truthfulness / Faithfulness** | **100.00%** | Strict factual grounding in context (LLM-as-a-judge) |
+| **Citation Accuracy** | **100.00%** | Zero hallucinated book titles or authors |
+| **Guardrail Adherence** | **100.00%** | Strict refusal of math calculations and off-topic requests |
+
+Full breakdown and JSON logs: [evaluation/results/evaluation_report.md](evaluation/results/evaluation_report.md).
+
+---
+
 ## 🖼️ Screenshots
 
 ### Home — Book Discovery Interface
