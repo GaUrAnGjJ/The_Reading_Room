@@ -1,17 +1,81 @@
+# ==============================================================================
+# The Reading Room - .gitignore
+# ==============================================================================
+
+# ── Python & Bytecode ────────────────────────────────────────────────────────
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
 .Python
-env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ── Virtual Environments ──────────────────────────────────────────────────────
 venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ── Secrets, Credentials & Local Config ───────────────────────────────────────
 .env
-.venv
-pip-log.txt
-pip-delete-this-directory.txt
-.vscode/
-.idea/
+.env.*
+*.env
+!.env.example
+secrets.toml
+.streamlit/secrets.toml
+
+# ── Application Logs & Runtime Cache ──────────────────────────────────────────
 logs/
+*.log
+*.pid
+active_url.txt
+tunnel_runner.py
 ponytail/
+
+# ── Temporary & Obsolete Documentation/Data ──────────────────────────────────
 README__.md
 RAG_CHATBOT_IMPLEMENTATION.md
+data/processed/*_old.csv
+data/processed/*_old.json
+
+# ── Testing & Scratch Artifacts ───────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+test_*.py
+test_*.png
+capture_screenshots.py
+generate_all_screenshots.py
+update_*.py
+scratch/
+
+# ── IDEs & Operating System Artifacts ─────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
