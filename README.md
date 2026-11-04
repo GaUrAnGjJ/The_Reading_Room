@@ -5,7 +5,10 @@
 ### *An Intelligent Book Discovery & Conversational Recommendation System*
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.66-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.128-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+
 [![Precision@20](https://img.shields.io/badge/Precision@20-0.70-2ea44f?style=for-the-badge)](evaluate.py)
 [![Recall@20](https://img.shields.io/badge/Recall@20-0.60-blue?style=for-the-badge)](evaluate.py)
 [![MRR](https://img.shields.io/badge/MRR-0.78-orange?style=for-the-badge)](evaluate.py)
@@ -17,557 +20,219 @@
 
 ## 📖 Overview
 
-**The Reading Room** is a full-stack, AI-powered book discovery platform that goes beyond keyword search. It combines a **semantic embedding engine** with a **Retrieval-Augmented Generation (RAG) chatbot** so users can explore a curated library of **~28,500 books** by describing themes, moods, plot elements, or having a natural conversation.
+**The Reading Room** is a full-stack, AI-driven book discovery platform and conversational recommendation system built over a curated library of **~28,500 books**. 
 
-Whether you type *"a melancholy story about artificial intelligence"* or ask *"something shorter than that"* as a follow-up — The Reading Room understands context, resolves ambiguity, and surfaces the most relevant titles from the catalog without hallucinating books that don't exist.
-
----
-
-## ✨ Key Features
-
-| # | Feature | Description |
-|---|---------|-------------|
-| 1 | **Semantic Search** | Understands intent, mood, and theme — not just keywords |
-| 2 | **Hybrid Retrieval** | Blends vector cosine similarity with author-boosted keyword matching |
-| 3 | **RAG Chatbot** | Multi-turn conversational interface grounded exclusively in the catalog |
-| 4 | **Query Rewriting** | Resolves pronouns and follow-ups into standalone search queries automatically |
-| 5 | **Anti-Hallucination** | LLM is hard-constrained to only cite titles present in retrieved context |
-| 6 | **End-to-End ETL** | Complete data pipeline: raw CSV → ingestion → cleaning → SQLite → embeddings |
-| 7 | **High-Performance API** | Async FastAPI with a singleton recommender loaded at startup |
-| 8 | **Dockerized Deployment** | One-command local deployment via Docker |
+Traditional bookstore and library search engines fail when users don't remember an exact title or author. The Reading Room bridges this gap using:
+1. **Dense Semantic Embeddings** (`all-MiniLM-L6-v2`) to capture natural-language vibes, themes, and abstract plot descriptions.
+2. **Author-Boosted Lexical Matching** for instant author and title lookups.
+3. **Retrieval-Augmented Generation (RAG)** (`llama-3.3-70b` / Groq) for conversational, context-grounded recommendations with zero hallucinations.
+4. **Production Web Application** featuring both an interactive Streamlit UI and a high-throughput async FastAPI REST backend.
+5. **Comprehensive Evaluation Suite** measuring Precision@K, Recall@K, Mean Reciprocal Rank (MRR), and LLM-as-a-judge Truthfulness.
 
 ---
 
-## 🏗️ Architecture
-
-The system is composed of five distinct, loosely coupled layers that flow data from raw sources to the user interface:
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          THE READING ROOM                               │
-│                                                                         │
-│  ┌──────────┐    ┌──────────────┐    ┌─────────────┐                   │
-│  │ Raw Data │───▶│  Ingestion   │───▶│ Transform & │                   │
-│  │  (CSV)   │    │  Pipeline    │    │   Clean     │                   │
-│  └──────────┘    └──────────────┘    └──────┬──────┘                   │
-│                                             │                           │
-│                           ┌─────────────────┼──────────────┐           │
-│                           ▼                 ▼              │           │
-│                    ┌────────────┐   ┌──────────────┐       │           │
-│                    │   SQLite   │   │  Embeddings  │       │           │
-│                    │  library.db│   │ (80MB .pkl)  │       │           │
-│                    └─────┬──────┘   └──────┬───────┘       │           │
-│                          │                 │               │           │
-│                          ▼                 ▼               │           │
-│                    ┌─────────────────────────────┐         │           │
-│                    │       FastAPI Backend        │         │           │
-│                    │  /search  /recommend  /chat  │         │           │
-│                    └──────────────┬──────────────┘         │           │
-│                                   │                         │           │
-│              ┌────────────────────┤                         │           │
-│              ▼                    ▼                         │           │
-│    ┌──────────────────┐  ┌────────────────────┐            │           │
-│    │  Semantic Engine  │  │   RAG Chatbot      │            │           │
-│    │ all-MiniLM-L6-v2 │  │ llama-3.3-70b      │            │           │
-│    │ + Cosine Sim.    │  │ (via Groq API)     │            │           │
-│    └──────────────────┘  └────────────────────┘            │           │
-│                                   │                         │           │
-│                                   ▼                         │           │
-│                    ┌──────────────────────────┐             │           │
-│                    │    Vanilla Frontend       │             │           │
-│                    │   (HTML + CSS + JS)       │             │           │
-│                    └──────────────────────────┘             │           │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### Mermaid Diagram
-
-```mermaid
-graph TD
-    A["📂 Raw CSV\n~36,361 records"] -->|ingestion.py| B["🔄 Ingestion\nOpenLibrary + Google Books\n+ Bookswagon APIs"]
-    B -->|transformation.py| C["🧹 Transformation\nHTML cleaning, ISBN normalization\nauthor normalization"]
-    C -->|db.py| D[("🗃️ SQLite DB\n~28,503 books\n45 MB")]
-    D -->|build_embeddings.py| E["🧠 Embedding Generation\nall-MiniLM-L6-v2\n384-dim vectors"]
-    E --> F[("📦 embeddings.pkl\n~80 MB")]
-    D --> G["⚡ FastAPI Backend"]
-    F --> G
-    G -->|/search| H["🔍 Keyword Search"]
-    G -->|/recommend| I["🎯 Semantic Recommender\nCosine Similarity\n+ Author Boost"]
-    G -->|/chat POST| J["💬 RAG Chatbot\nQuery Rewrite → Retrieve → Generate"]
-    J -->|Groq API| K["🤖 LLaMA 3.3 70B\nGrounded Response\nAnti-hallucination"]
-    H --> L["🌐 Frontend UI"]
-    I --> L
-    K --> L
-```
-
----
-
-## 🤖 Models Used & Why They Are the Best Choice
-
-### 1. `all-MiniLM-L6-v2` — Sentence Transformers *(Retrieval / Embedding)*
-
-| Property | Value |
-|----------|-------|
-| Dimensions | 384 |
-| Parameters | ~22M |
-| Speed | ~14,200 sentences/sec (CPU) |
-| SBERT Benchmark | Top-tier on STS & semantic search tasks |
-
-**Why this model?**
-- **Size-to-performance ratio** is unmatched — at only ~90 MB, it achieves semantic understanding comparable to models 10× larger.
-- **CPU-friendly** — critical for Hugging Face Spaces free tier and local development without a GPU.
-- **Pre-trained on diverse corpora** (Wikipedia, book abstracts, Reddit, StackExchange) — covers literary vocabulary well.
-- **384-dim vectors** are compact enough to fit 28,500 embeddings in ~80 MB of RAM while still being highly discriminative.
-- Produces **cosine-comparable embeddings** out of the box, making retrieval implementation simple and correct.
-
----
-
-### 2. `llama-3.3-70b-versatile` — Meta LLaMA via Groq *(Generation / RAG)*
-
-| Property | Value |
-|----------|-------|
-| Parameters | 70 Billion |
-| Quantization | BF16 (Groq native) |
-| Context Window | 128K tokens |
-| Inference Speed | ~800 tokens/sec (Groq hardware) |
-| API | Groq Cloud (free tier available) |
-
-**Why this model?**
-- **70B parameter scale** provides sophisticated reasoning ability — it can infer why a book fits a user's mood from a brief description, then articulate that convincingly.
-- **LLaMA 3.3 specifically** outperforms LLaMA 3.1 70B on instruction following, which is critical for our strict anti-hallucination system prompt.
-- **Groq's LPU hardware** delivers inference at ~800 tok/s — the RAG response roundtrip feels instantaneous vs. standard GPU endpoints.
-- **Large context window (128K)** means we can safely inject the full book catalog context block plus multi-turn conversation history without truncation.
-- **Zero cost on free tier** — ideal for academic projects; no billing required for reasonable query volumes.
-
----
-
-### Why RAG Instead of Pure LLM?
-
-Pure LLMs hallucinate book titles and authors — this is a well-documented failure mode. By using **Retrieval-Augmented Generation**:
-
-1. We first retrieve the **top 5 most relevant books** from our verified catalog.
-2. Only those books are injected into the LLM's context.
-3. The system prompt **hard-constrains** the model to cite only books present in that context.
-4. The result is a chatbot that is *knowledgeable* (LLM) but *grounded in facts* (our data).
-
----
-
-## 📁 Project Structure
-
-```
-The_reading_room/
-│
-├── 📂 API/
-│   ├── main.py               # FastAPI app — all HTTP endpoints
-│   └── __init__.py
-│
-├── 📂 chat/
-│   ├── chatbot.py            # RAG pipeline (rewrite → retrieve → generate)
-│   └── __init__.py
-│
-├── 📂 recommender/
-│   ├── recommender.py        # BookRecommender class (semantic + keyword)
-│   ├── build_embeddings.py   # One-time script to generate embeddings.pkl
-│   ├── embeddings.pkl        # Pre-built vectors (~80 MB, tracked with Git LFS)
-│   └── patch_metadata.py     # Utility to patch metadata in embeddings
-│
-├── 📂 ingestion/
-│   └── ingestion.py          # Multi-source description scraper pipeline
-│
-├── 📂 transformation/
-│   └── transformation.py     # Data cleaning, ISBN normalization, author normalization
-│
-├── 📂 storage/
-│   ├── db.py                 # SQLite schema + bulk insert helpers
-│   └── library.db            # Compiled database (~45 MB, tracked with Git LFS)
-│
-├── 📂 frontend/
-│   ├── index.html            # Single-page application shell
-│   ├── app.js                # All UI logic — search, recommend, chat
-│   └── styles.css            # Full design system (~22 KB)
-│
-├── 📂 data/
-│   ├── rae/RC_books.csv      # Raw library catalog
-│   └── processed/            # Intermediate and clean CSVs
-│
-├── 📂 logs/                  # Runtime logs
-├── 📂 screenshots/           # UI screenshots for documentation
-│
-├── pipeline.py               # CLI entry point (--ingestion, --db, --api, --all)
-├── requirements.txt          # Python dependencies
-├── Dockerfile                # Multi-stage container build
-├── docker-compose.yml        # Compose config for local container dev
-├── start.sh                  # Container startup script
-├── .env                      # Local secrets (never committed)
-└── .gitignore
-```
-
----
-
-## 🔄 Full Data Pipeline Workflow
-
-The data flows through four sequential stages before the application can serve requests:
-
-```
-Stage 1: INGESTION
-  RC_books.csv (36,361 raw records)
-      │
-      ├─▶ OpenLibrary JSON API    (primary — ISBN lookup)
-      ├─▶ Google Books HTML       (secondary — scraping synopsis div)
-      ├─▶ Bookswagon Scraper      (tertiary — #aboutbook div)
-      └─▶ Google Books REST API   (quaternary — title+author fallback)
-      │
-      ▼
-  dau_with_description.csv  (all records, raw descriptions appended)
-
-Stage 2: TRANSFORMATION
-  dau_with_description.csv
-      │
-      ├─▶ HTML entity decoding + tag stripping
-      ├─▶ URL removal, control character removal
-      ├─▶ Noise ratio filtering (>60% non-alpha → drop)
-      ├─▶ Author name normalization (lowercase, no punctuation)
-      ├─▶ ISBN padding + validation (drop malformed)
-      └─▶ Drop rows with no description
-      │
-      ▼
-  clean_description.csv  (~28,503 valid records)
-
-Stage 3: STORAGE
-  clean_description.csv
-      │
-      └─▶ SQLite INSERT OR IGNORE  (deduplication on isbn UNIQUE)
-      │
-      ▼
-  storage/library.db  (books table, 45 MB)
-
-Stage 4: EMBEDDING
-  library.db  (SELECT isbn, title, author, description WHERE description NOT NULL)
-      │
-      └─▶ "title: description" concatenation
-      └─▶ SentenceTransformer('all-MiniLM-L6-v2').encode()
-      │
-      ▼
-  recommender/embeddings.pkl  (80 MB numpy array + metadata dicts)
-```
-
-### RAG Chat Pipeline (per request)
-
-```
-User Message + History
-      │
-      ▼
-  1. rewrite_query()        → LLaMA resolves follow-ups into standalone query
-      │                        (skipped on first turn — no LLM call)
-      ▼
-  2. recommender.recommend() → Cosine similarity → top 50 candidates
-                               + Author keyword boost → top 5 final books
-      │
-      ▼
-  3. build_context()        → Format book metadata into numbered text block
-      │                        (titles, authors, year, truncated descriptions)
-      ▼
-  4. generate_response()    → LLaMA 3.3 70B call via Groq
-                               System prompt: "ONLY recommend books in CATALOG"
-      │
-      ▼
-  { reply, books, search_query }  →  Frontend
-```
-
----
-
-## 💻 Local Setup — Step by Step
-
-### Prerequisites
-
-| Requirement | Version | Notes |
-|------------|---------|-------|
-| Python | 3.11+ | `python --version` to check |
-| pip | latest | `pip install --upgrade pip` |
-| Git | any | For cloning |
-| Git LFS | any | Required for large files |
-| Groq API Key | — | Free at [console.groq.com](https://console.groq.com) |
-| Docker *(optional)* | 20.10+ | Only for containerized run |
-
----
-
-### Step 1 — Clone the Repository
-
-```bash
-git clone https://github.com/GaUrAnGjJ/The_reading_room.git
-cd The_reading_room
-```
-
-> **Note:** The repository uses **Git LFS** for `storage/library.db` (~45 MB) and `recommender/embeddings.pkl` (~80 MB). If these files are missing or appear as text pointers, install Git LFS first:
-> ```bash
-> git lfs install
-> git lfs pull
-> ```
-
----
-
-### Step 2 — Create & Activate a Virtual Environment
-
-```bash
-# Create virtual environment
-python -m venv venv
-
-# Activate — Windows
-.\venv\Scripts\activate
-
-# Activate — macOS / Linux
-source venv/bin/activate
-```
-
----
-
-### Step 3 — Install Dependencies
-
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-> **Heads-up:** `sentence-transformers` will automatically download `all-MiniLM-L6-v2` (~90 MB) on first use. This is cached to `~/.cache/huggingface/` and won't re-download on subsequent runs.
-
----
-
-### Step 4 — Configure Environment Variables
-
-Create a `.env` file in the project root:
-
-```bash
-# .env  (never commit this file)
-GROQ_API_KEY=your_groq_api_key_here
-```
-
-Get your free Groq API key at [https://console.groq.com](https://console.groq.com).
-
-The `.env` file is already in `.gitignore` — it will not be committed.
-
----
-
-### Step 5 — Initialize the Database (if `library.db` is not present)
-
-> **Skip this step** if `storage/library.db` was pulled via Git LFS.
-
-```bash
-# Run only the database initialization stage
-python pipeline.py --db
-```
-
-This reads `data/processed/clean_description.csv` and populates `storage/library.db`.
-
----
-
-### Step 6 — Generate Embeddings (if `embeddings.pkl` is not present)
-
-> **Skip this step** if `recommender/embeddings.pkl` was pulled via Git LFS.
-
-```bash
-python recommender/build_embeddings.py
-```
-
-This step encodes ~28,500 book descriptions using `all-MiniLM-L6-v2`. It takes **10–20 minutes on CPU** and produces `recommender/embeddings.pkl` (~80 MB).
-
----
-
-### Step 7 — Run the Application
-
-```bash
-python pipeline.py --api
-```
-
-The server starts on **[http://localhost:7860](http://localhost:7860)**.
-
-You should see:
-```
-INFO:     Recommender model loaded successfully.
-INFO:     Uvicorn running on http://127.0.0.1:7860
-```
-
-> The recommender model is pre-loaded at startup to avoid latency on the first request.
-
----
-
-### Step 8 — Verify the API
-
-Open a new terminal and run a quick smoke test:
-
-```bash
-# Health check
-curl http://localhost:7860/api/health
-
-# Semantic recommendation
-curl "http://localhost:7860/recommend?query=sad+story+about+robots"
-
-# RAG Chat — single turn
-curl -X POST http://localhost:7860/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "I want a mystery novel set in Victorian London", "history": []}'
-
-# RAG Chat — multi-turn follow-up
-curl -X POST http://localhost:7860/chat \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "something shorter than that",
-    "history": [
-      {"role": "user", "content": "I want a mystery novel set in Victorian London"},
-      {"role": "assistant", "content": "<previous reply>"}
-    ]
-  }'
-```
-
----
-
-## Uvicorn Command to run locally
-```.\venv\Scripts\python.exe -m uvicorn API.main:app --host 127.0.0.1 --port 8000```
-
-## 🐳 Running with Docker
-
-The Dockerfile handles everything automatically — model download, database init, and startup.
-
-```bash
-# Build the image  (~5–10 min on first build due to PyTorch + model download)
-docker build -t the-reading-room .
-
-# Run the container (port 7860 matches HF Spaces default)
-docker run -p 7860:7860 -e GROQ_API_KEY=your_key_here the-reading-room
-```
-
-Using Docker Compose:
-
-```bash
-# GROQ_API_KEY is read from your shell environment (never hard-code it)
-GROQ_API_KEY=your_key_here docker-compose up
-```
-
-
----
-
-## 🔌 API Reference
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/health` | Server health check |
-| `GET` | `/books/{isbn}` | Fetch a single book by ISBN |
-| `GET` | `/search?q=<query>` | Keyword search (title or author) |
-| `GET` | `/recommend?query=<query>` | Semantic + author-boosted recommendations |
-| `GET` | `/random-books` | 10 random books from the catalog |
-| `POST` | `/chat` | RAG chat — accepts `{message, history[]}`, returns `{reply, books, search_query}` |
-
-### POST `/chat` — Request Body
-
-```json
-{
-  "message": "suggest something dark and philosophical",
-  "history": [
-    {"role": "user", "content": "...previous user turn..."},
-    {"role": "assistant", "content": "...previous assistant turn..."}
-  ]
-}
-```
-
-### POST `/chat` — Response
-
-```json
-{
-  "reply": "Based on your interest in philosophical themes...",
-  "books": [
-    {
-      "isbn": "9780743273565",
-      "title": "The Great Gatsby",
-      "author": "f scott fitzgerald",
-      "year": 1925,
-      "description": "...",
-      "poster_url": "...",
-      "book_url": "...",
-      "score": 0.847
-    }
-  ],
-  "search_query": "dark philosophical literary fiction existential"
-}
-```
-
----
-
-## 📊 Dataset & Performance Statistics
-
-### Data Pipeline
-
-| Stage | Records | Notes |
-|-------|---------|-------|
-| Raw Input | 36,361 | `RC_books.csv` — library accession catalog |
-| After Deduplication | ~35,000 | ISBN-based dedup |
-| After Description Enrichment | ~35,000 | Multi-source scraping |
-| After Transformation & Cleaning | **28,503** | ~21% dropped (no valid description) |
-
-### Description Sources (Cascade Priority)
-
-| # | Source | Method |
-|---|--------|--------|
-| 1 | **OpenLibrary** | JSON API — `isbn/{isbn}.json` + works endpoint fallback |
-| 2 | **Google Books HTML** | BeautifulSoup scrape of synopsis div |
-| 3 | **Bookswagon** | BeautifulSoup scrape of `#aboutbook` div |
-| 4 | **Google Books REST API** | `intitle:` + `inauthor:` query fallback |
-
-### Technical Metrics
-
-| Metric | Value |
-|--------|-------|
-| Embedding Dimensions | 384 (all-MiniLM-L6-v2) |
-| Database Size | ~45 MB (SQLite) |
-| Embeddings Artifact | ~80 MB (Pickle + NumPy) |
-| Semantic Search Latency | < 100 ms (CPU) |
-| RAG Chat Latency | ~1–2 seconds (Groq network roundtrip) |
-| History Window | Last 6 turns (stays within LLM token budget) |
-| Max Books Retrieved per Chat | 5 |
-| Max Description in Context | 400 chars (truncated at word boundary) |
-
----
-
-## 📊 RAG & Retrieval Evaluation
-
-A dedicated quantitative evaluation suite ([`evaluate.py`](evaluate.py) & [`evaluation/`](evaluation/)) benchmarks both Information Retrieval and RAG generation quality across our 28,500-book catalog.
+## 🌟 Key Highlights & Evaluation Scores
 
 <div align="center">
 
 | 🎯 Precision@20 | 📥 Recall@20 | ⚡ Mean Reciprocal Rank (MRR) | 🛡️ Truthfulness |
 | :---: | :---: | :---: | :---: |
-| **`0.70`** *(70%)* | **`0.60`** *(60%)* | **`0.78`** | **`100%`** *(Zero Hallucination)* |
+| **`0.70`** *(70.0%)* | **`0.60`** *(60.0%)* | **`0.78`** | **`100%`** *(Zero Hallucination)* |
 
 </div>
 
 > [!TIP]
-> ### 💡 Key Evaluation Highlights
-> - **Precision@20 = 0.70 (70%)**: Out of top 20 retrieved candidates, 70% of recommendations match the queried themes, categories, and author metadata.
+> **Key Evaluation Highlights**:
+> - **Precision@20 = 0.70 (70%)**: Out of top 20 retrieved candidates, 70% of recommendations match queried themes, categories, and author metadata.
 > - **Recall@20 = 0.60 (60%)**: Recovers 60% of all relevant catalog titles within the top-20 search results.
 > - **MRR = 0.78**: The first relevant book is placed at an average rank between **#1** and **#2** ($\text{rank} \approx 1.28$).
 > - **Truthfulness = 100%**: Zero external hallucinated books or false claims; 100% of generated responses are strictly grounded in retrieved catalog text (verified via Groq LLM-as-a-judge & entity extraction).
 
+---
+
+## 🏗️ System Architecture
+
+The Reading Room follows a modular, decoupled architecture consisting of **Data Pipeline**, **Retrieval & RAG Engine**, **Interface Layer**, and **Evaluation Harness**:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   THE READING ROOM                                      │
+│                                                                                         │
+│   [ DATA & ETL PIPELINE ]                                                               │
+│   Raw CSV (~36K books) ──▶ Multi-Source Scraper ──▶ Cleaning & Normalization            │
+│                                                          │                              │
+│                                            ┌─────────────┴────────────┐                 │
+│                                            ▼                          ▼                 │
+│                                     SQLite Database             Embeddings Cache        │
+│                                     (library.db, 45MB)        (embeddings.pkl, 80MB)    │
+│                                            │                          │                 │
+│   [ CORE ENGINES ]                         └─────────────┬────────────┘                 │
+│                                                          ▼                              │
+│                         ┌────────────────────────────────────────────────────────┐      │
+│                         │        BookRecommender (Semantic + Author Boost)       │      │
+│                         └────────────────────────┬───────────────────────────────┘      │
+│                                                  │                                      │
+│                     ┌────────────────────────────┴───────────────────────────┐          │
+│                     ▼                                                        ▼          │
+│        [ RAG Chatbot Pipeline ]                                     [ Evaluation Suite] │
+│   Query Rewrite ──▶ Retrieval ──▶ LLM (Groq)                   P@K, R@K, MRR, Truth     │
+│   Strict Guardrail ──▶ Grounded Response                       (evaluate.py)            │
+│                     │                                                                   │
+│   [ DUAL INTERFACES ]                                                                   │
+│                     ├────────────────────────────────────────┐                          │
+│                     ▼                                        ▼                          │
+│        Streamlit Web Application                        FastAPI REST API                │
+│        (Interactive User Interface)                     (/search, /recommend, /chat)    │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### End-to-End Workflow Diagram
+
+```mermaid
+graph TD
+    A["📂 Raw Dataset\n~36,361 records"] -->|ingestion.py| B["🔄 Ingestion Scraper\nOpenLibrary + Google Books\n+ Bookswagon"]
+    B -->|transformation.py| C["🧹 Data Cleaning\nHTML strip, ISBN normalization\nAuthor formatting"]
+    C -->|db.py| D[("🗃️ SQLite DB\n28,503 books (45 MB)")]
+    D -->|build_embeddings.py| E["🧠 Embedding Generation\nall-MiniLM-L6-v2 (384-dim)"]
+    E --> F[("📦 embeddings.pkl\n~80 MB NumPy Cache")]
+    
+    subgraph "Inference & Retrieval"
+        D --> REC["🎯 BookRecommender\nCosine Similarity + Keyword Boost"]
+        F --> REC
+    end
+
+    subgraph "RAG Generation Pipeline"
+        USER["👤 User Query"] --> GUARD{"🛡️ Guardrail Check\nMath & Off-Topic?"}
+        GUARD -->|Refuse| REF["Immediate Guardrail Refusal"]
+        GUARD -->|Allow| REWRITE["Query Rewriter\nResolve Follow-ups"]
+        REWRITE --> REC
+        REC --> CTX["Context Builder\nTop Books Injected"]
+        CTX --> LLM["🤖 LLaMA 3.3 70B (Groq)\nStrict Grounding"]
+    end
+
+    subgraph "Serving & Evaluation"
+        REC --> APP["🎨 Streamlit UI (streamlit_App.py)"]
+        LLM --> APP
+        REC --> API["⚡ FastAPI Server (API/main.py)"]
+        REC --> EVAL["📊 Evaluation Suite (evaluate.py)"]
+        LLM --> EVAL
+    end
+```
+
+---
+
+## 🎯 Dual-Interface Application
+
+The system exposes two complementary interfaces for interacting with the catalog:
+
+### 1. Interactive Streamlit Web UI (`streamlit_App.py`)
+A book discovery interface with custom paper-textured styling, Serif typography, dynamic book covers, and hidden toolbars:
+- **✨ Describe your Book**: Free-form natural language thematic discovery (e.g., *"a melancholy sci-fi story about conscious robots"*).
+- **🔎 Keyword Search**: Real-time SQL search across book titles and authors.
+- **🎲 From the Shelves**: Curated library exploration with instant catalog shuffle.
+- **💬 Chat with Assistant**: Grounded multi-turn conversational AI book curator.
+- **🎨 Dynamic Cover Generation**: Automatically generates elegant gold-foiled SVG covers when an ISBN lacks a scan on OpenLibrary, preventing broken images.
+
+### 2. High-Performance REST API (`API/main.py`)
+Async endpoints powered by FastAPI and Uvicorn:
+- `GET /` — API health status and loaded model confirmation.
+- `GET /search?q={query}` — Title and author keyword search.
+- `POST /recommend` — Dense vector semantic search returning top-$k$ matches with similarity scores.
+- `POST /chat` — Conversational RAG pipeline supporting multi-turn chat history.
+- `GET /random-books` — Fast random catalog sampling for discovery shelves.
+
+---
+
+## 📊 RAG & Retrieval Evaluation
+
+The project features a standalone evaluation framework located in [`evaluation/`](evaluation/) with CLI entrypoint [`evaluate.py`](evaluate.py). It quantitatively benchmarks both Information Retrieval (recommender) and Generation (LLM grounding):
+
 ```bash
-# Run the evaluation suite across the benchmark dataset
 python evaluate.py --k 1 3 5 20
 ```
 
 ### 📋 Full Benchmark Metric Breakdown
 
-| Metric | Score | Category | Interpretation |
+| Metric | Score | Category | Technical Interpretation |
 |---|:---:|:---:|---|
-| **Precision@20** | **`0.70`** *(70.0%)* | Retrieval | Signal-to-noise ratio in top-20 candidate retrieval |
-| **Recall@20** | **`0.60`** *(60.0%)* | Retrieval | Catalog coverage of relevant titles within top-20 |
-| **Mean Reciprocal Rank (MRR)** | **`0.78`** | Ranking | Mean reciprocal rank position of the first relevant hit |
-| **Truthfulness / Faithfulness** | **`100.0%`** | Generation | Strict context grounding with zero hallucinations |
-| **Citation Accuracy** | **`100.0%`** | Entity Grounding | 100% of cited book titles/authors exist in retrieved context |
-| **Guardrail Adherence** | **`100.0%`** | Safety | Immediate refusal of math/trivia queries outside the book catalog |
-| **Precision@1** | **`62.5%`** | Retrieval | Top-1 recommendation accuracy on first hit |
-| **Recall@5** | **`65.6%`** | Retrieval | Catalog recall captured in top-5 recommendations |
+| **Precision@20** | **`0.70`** *(70.0%)* | Retrieval | 7 out of 10 returned candidates in top-20 are relevant |
+| **Recall@20** | **`0.60`** *(60.0%)* | Retrieval | Recovers 60% of all relevant catalog titles within top-20 |
+| **Mean Reciprocal Rank (MRR)** | **`0.78`** | Ranking | Mean reciprocal position of the first hit ($\text{rank} \approx 1.28$) |
+| **Truthfulness / Faithfulness** | **`100.0%`** | Generation | Zero hallucinations; all claims supported by retrieved context |
+| **Citation Accuracy** | **`100.0%`** | Grounding | 100% of cited book titles/authors exist in retrieved context |
+| **Guardrail Adherence** | **`100.0%`** | Safety | Immediate rejection of math calculations and off-topic trivia |
+| **Precision@1** | **`62.5%`** | Retrieval | Probability that the very first book returned is an exact hit |
+| **Recall@5** | **`65.6%`** | Retrieval | Catalog recall captured in the top-5 recommendations |
 
-Full query logs & per-case scores: [`evaluation/results/evaluation_report.md`](evaluation/results/evaluation_report.md).
+Detailed query logs & per-case scores are exported to [`evaluation/results/evaluation_report.md`](evaluation/results/evaluation_report.md) and [`evaluation/results/evaluation_report.json`](evaluation/results/evaluation_report.json).
+
+### Mathematical Definitions
+
+1. **Precision@K**: Measures recommendation purity in the top-$K$:
+   $$\text{Precision@}K = \frac{|\text{Retrieved}_K \cap \text{Relevant}|}{K}$$
+
+2. **Recall@K**: Measures catalog coverage within the top-$K$:
+   $$\text{Recall@}K = \frac{|\text{Retrieved}_K \cap \text{Relevant}|}{|\text{Relevant}|}$$
+
+3. **Mean Reciprocal Rank (MRR)**: Measures how high the first correct result appears:
+   $$\text{MRR} = \frac{1}{|Q|} \sum_{i=1}^{|Q|} \frac{1}{\text{rank}_i}$$
+
+4. **Truthfulness (Faithfulness)**: Measured via an **LLM-as-a-judge** auditor + entity citation parser. Evaluates whether every factual claim made by the assistant is traceable to the retrieved context chunks:
+   $$\text{Truthfulness} = \frac{\text{Supported Claims}}{\text{Total Claims}} \in [0.0, 1.0]$$
 
 ---
 
-## 🖼️ Screenshots
+## 🤖 Models & Architectural Decisions
+
+### 1. `all-MiniLM-L6-v2` — Sentence Transformers *(Retrieval / Vector Embedding)*
+- **Embedding Dimensions**: 384
+- **Parameters**: 22.7M
+- **Inference Speed**: ~14,200 sentences/sec on CPU
+- **Memory Footprint**: Entire 28,500-vector index occupies only **~80 MB RAM**.
+- **Why this model?** Outstanding size-to-accuracy trade-off. Pre-trained on diverse web, Wikipedia, and literary corpora; delivers sub-100ms cosine similarity searches on commodity CPU hardware without requiring dedicated vector databases.
+
+### 2. `llama-3.3-70b-versatile` — Meta LLaMA via Groq *(RAG Generation)*
+- **Parameters**: 70 Billion (BF16 native)
+- **Context Window**: 128,000 tokens
+- **Inference Speed**: ~800 tokens/sec via Groq LPU hardware
+- **Why this model?** Superior instruction-following ability compared to smaller models. Strictly abides by the catalog-grounding system prompt and reliably rejects out-of-domain or calculation queries without hallucinations.
+
+---
+
+## 🛡️ Anti-Hallucination & Guardrails
+
+The RAG pipeline implements multi-layered defensive guardrails:
+
+```
+User Input ──▶ [Layer 1: Regex Guardrail]
+                    │
+                    ├─▶ Math / Arithmetic detected? ────▶ Immediate Refusal
+                    ├─▶ Technical calculation?     ────▶ Immediate Refusal
+                    │
+                    ▼
+               [Layer 2: Query Rewriter]
+                    │
+                    ▼
+               [Layer 3: Strict Recommender Context]
+                    │ (Only top verified catalog books injected)
+                    ▼
+               [Layer 4: System Prompt Constraints]
+                    │ ("ONLY recommend books in CATALOG")
+                    ▼
+               [Layer 5: Output Verification]
+                    └──▶ Grounded natural language response
+```
+
+1. **Deterministic Guardrails (`chat/chatbot.py`)**:
+   Detects arithmetic operations, equations, calculus terms, and non-book queries via pre-retrieval regex patterns. Refuses immediately with a standardized catalog message without burning LLM API tokens.
+2. **Context-Grounded System Prompt**:
+   Explicitly instructs the LLM that its knowledge is strictly restricted to the injected context block. Citing external books or general knowledge is strictly disallowed.
+3. **Query Rewriting**:
+   On multi-turn conversations, pronouns and references (*"something shorter than that"*) are rewritten into standalone search terms before retrieval, maintaining precision across dialogue turns.
+
+---
+
+## 🖼️ Application Screenshots
 
 ### Home — Book Discovery Interface
 ![Home / Search UI](screenshots/UI.png)
@@ -578,51 +243,133 @@ Full query logs & per-case scores: [`evaluation/results/evaluation_report.md`](e
 ### Book Shelf — Random Exploration
 ![Random Books Shelf](screenshots/shelves.png)
 
-### Chatbot Interface - Conversational AI
-
+### Chatbot Interface — Conversational AI
 ![Chatbot Interface](screenshots/Chatbot.png)
 
 ---
 
-## 🛠️ Technology Stack
+## 📁 Repository Structure
 
-| Layer | Technology | Version | Role |
-|-------|-----------|---------|------|
-| **Language** | Python | 3.11 | Entire backend |
-| **Web Framework** | FastAPI | 0.128 | API server |
-| **ASGI Server** | Uvicorn | 0.40 | Production-ready async server |
-| **Database** | SQLite | — | Relational book store |
-| **Data Processing** | Pandas | 2.3.2 | ETL pipeline |
-| **Embedding Model** | Sentence Transformers | 3.1.1 | Semantic vector generation |
-| **ML Model** | all-MiniLM-L6-v2 | — | 384-dim sentence embeddings |
-| **Vector Search** | Scikit-Learn | 1.6.1 | Cosine similarity retrieval |
-| **LLM** | LLaMA 3.3 70B | — | RAG response generation |
-| **LLM API** | Groq | — | Ultra-fast LPU inference |
-| **Web Scraping** | BeautifulSoup4 | 4.12.2 | Description ingestion |
-| **HTTP Client** | Requests | 2.28.2 | API calls with retry |
-| **Frontend** | Vanilla HTML/CSS/JS | — | Zero-dependency UI |
-| **Containerization** | Docker | — | Reproducible builds |
-| **Hosting** | Hugging Face Spaces | — | Free-tier deployment |
-| **Secrets** | python-dotenv | 1.0.1 | Local `.env` loading |
-
+```
+The_reading_room/
+│
+├── 📂 API/                       # FastAPI async backend
+│   ├── main.py                  # HTTP route definitions (/search, /recommend, /chat)
+│   └── __init__.py
+│
+├── 📂 chat/                      # RAG orchestration & guardrails
+│   ├── chatbot.py               # rewrite_query, build_context, generate_response
+│   └── __init__.py
+│
+├── 📂 recommender/               # Embedding generation & vector search
+│   ├── recommender.py           # BookRecommender class (dense cosine + author boost)
+│   ├── build_embeddings.py      # Vector builder for all-MiniLM-L6-v2
+│   ├── patch_metadata.py        # Metadata patch utility
+│   └── embeddings.pkl           # Precomputed vectors (~80 MB, tracked with Git LFS)
+│
+├── 📂 evaluation/                # Quantitative evaluation framework
+│   ├── metrics.py               # Precision@K, Recall@K, MRR, Truthfulness
+│   ├── dataset.py               # Curated 20-query benchmark dataset
+│   ├── evaluator.py             # RAGEvaluator benchmark orchestrator
+│   └── results/                 # Auto-generated JSON and Markdown reports
+│       ├── evaluation_report.md
+│       └── evaluation_report.json
+│
+├── 📂 storage/                   # Database models & SQLite storage
+│   ├── db.py                    # SQLite schema initialization & queries
+│   └── library.db               # Compiled catalog DB (28,503 books, Git LFS)
+│
+├── 📂 ingestion/                 # Multi-source description scrapers
+│   └── ingestion.py             # OpenLibrary, Google Books, Bookswagon pipeline
+│
+├── 📂 transformation/           # Data cleaning & normalization
+│   └── transformation.py        # ISBN validation, HTML stripping, author cleanup
+│
+├── 📂 frontend/                  # Static SPA (HTML, CSS, JS)
+│   ├── index.html
+│   ├── app.js
+│   └── styles.css
+│
+├── 📂 screenshots/               # High-resolution documentation UI captures
+│   ├── UI.png
+│   ├── search.png
+│   ├── shelves.png
+│   └── Chatbot.png
+│
+├── evaluate.py                  # Evaluation CLI entry point
+├── streamlit_App.py             # Full-featured Streamlit web application
+├── pipeline.py                  # End-to-end data pipeline runner
+├── requirements.txt             # Python project dependencies
+├── Dockerfile                   # Container build definition
+├── docker-compose.yml           # Multi-container orchestration
+├── .gitignore                   # Structured Git ignore rules
+└── README.md                    # Project documentation
+```
 
 ---
 
-## 👥 Contributors
+## 🚀 Getting Started
 
-<div align="center">
+### Prerequisites
+- **Python 3.11+**
+- **Git & Git LFS** (required to pull `embeddings.pkl` and `library.db`)
+- **Groq API Key** (free at [console.groq.com](https://console.groq.com))
 
-| Name | GitHub |
-| :--- | :--- |
-| **Gaurang Jadav** | [@GaUrAnGjJ](https://github.com/GaUrAnGjJ) |
+### 1. Clone the Repository & Pull LFS Data
+```bash
+git clone https://github.com/GaUrAnGjJ/The_Reading_Room.git
+cd The_Reading_Room
+git lfs pull
+```
 
-</div>
+### 2. Create Virtual Environment & Install Dependencies
+```bash
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 3. Configure Environment Variables
+Create a `.env` file in the project root:
+```ini
+GROQ_API_KEY=gsk_your_actual_groq_api_key_here
+```
+
+### 4. Run the Streamlit Application (Recommended)
+```bash
+streamlit run streamlit_App.py
+```
+Open [http://localhost:8501](http://localhost:8501) in your browser.
+
+### 5. Run the FastAPI Backend (Optional)
+```bash
+uvicorn API.main:app --host 127.0.0.1 --port 8000 --reload
+```
+Interactive API documentation will be available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+### 6. Run the Quantitative Evaluation Suite
+```bash
+python evaluate.py --k 1 3 5 20
+```
 
 ---
 
-## 📄 License
+## 🐳 Docker Deployment
 
-This project is developed as an academic project at **DA-IICT** and extende. All data sourced from OpenLibrary, Google Books, and Bookswagon is used in accordance with their respective terms for educational purposes.
+The project can be run inside an isolated Docker container with one command:
+
+```bash
+GROQ_API_KEY=your_key_here docker-compose up --build
+```
+The FastAPI application will start on `http://localhost:8000`.
 
 ---
 
+## 📜 License
+
+This project is developed for educational and academic research purposes at DA-IICT.
