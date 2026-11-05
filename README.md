@@ -156,10 +156,7 @@ python evaluate.py --k 1 3 5 20
 | **Precision@20** | **`0.70`** *(70.0%)* | Retrieval | 7 out of 10 returned candidates in top-20 are relevant |
 | **Recall@20** | **`0.60`** *(60.0%)* | Retrieval | Recovers 60% of all relevant catalog titles within top-20 |
 | **Mean Reciprocal Rank (MRR)** | **`0.78`** | Ranking | Mean reciprocal position of the first hit ($\text{rank} \approx 1.28$) |
-| **Citation Accuracy** | **`100.0%`** | Grounding | 100% of cited book titles/authors exist in retrieved context |
-| **Guardrail Adherence** | **`100.0%`** | Safety | Immediate rejection of math calculations and off-topic trivia |
-| **Precision@1** | **`62.5%`** | Retrieval | Probability that the very first book returned is an exact hit |
-| **Recall@5** | **`65.6%`** | Retrieval | Catalog recall captured in the top-5 recommendations |
+
 
 Detailed query logs & per-case scores are exported to [`evaluation/results/evaluation_report.md`](evaluation/results/evaluation_report.md) and [`evaluation/results/evaluation_report.json`](evaluation/results/evaluation_report.json).
 
