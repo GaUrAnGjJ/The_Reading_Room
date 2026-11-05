@@ -397,7 +397,7 @@ def generate_svg_cover(title: str, author: str) -> str:
     return "data:image/svg+xml;base64," + base64.b64encode(svg.encode("utf-8")).decode("ascii")
 
 
-def render_book_card(book: dict):
+def render_book_card(book: dict, show_score: bool = True):
     raw_title = str(book.get("title") or "Unknown Title")
     raw_author = str(book.get("author") or "Unknown Author")
     title = html.escape(raw_title)
@@ -430,8 +430,8 @@ def render_book_card(book: dict):
     else:
         img_src = svg_data_uri
 
-    score_badge = ""
-    if score is not None:
+    score_badge = "<div></div>"
+    if show_score and score is not None:
         try:
             score_pct = int(float(score) * 100)
             score_badge = f'<div class="book-score">★ Match: {score_pct}%</div>'
@@ -573,7 +573,7 @@ with tab_chat:
                                 exp_cols = st.columns(min(3, len(result["books"])))
                                 for idx, b in enumerate(result["books"][:6]):
                                     with exp_cols[idx % 3]:
-                                        render_book_card(b)
+                                        render_book_card(b, show_score=False)
                     except Exception as e:
                         reply_text = f"Something went wrong: {e}"
                         st.error(reply_text)
