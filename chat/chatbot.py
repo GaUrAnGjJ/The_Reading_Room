@@ -99,40 +99,50 @@ def rewrite_query(history: list[dict], message: str) -> str:
     """Resolve a follow-up message into a self-contained search query.
 
     On the first turn (empty history), the message is returned as-is.
-    On subsequent turns, an LLM call resolves pronouns and references
-    (e.g. "something shorter than that" → "short sci-fi robot story").
-
-    Args:
-        history: List of prior {"role": ..., "content": ...} dicts.
-        message: The current user message.
-
-    Returns:
-        A standalone search query string safe to pass to the retriever.
+    On subsequent turns, checks for pronouns/references or falls back to message.
     """
-    # Turn 1 — no prior context, skip LLM call
-    if not history:
-        return message
+    clean_msg = message.strip()
+    if not history or not clean_msg:
+        return clean_msg
 
-    client = Groq(api_key=_get_api_key())
+    # Check if message already looks like a complete standalone query
+    # (does not contain conversational follow-up words)
+    follow_up_indicators = ["it", "that", "this", "those", "them", "another", "shorter", "longer", "more like", "instead", "else"]
+    words = clean_msg.lower().split()
+    has_indicator = any(ind in words for ind in follow_up_indicators)
 
-    system_prompt = (
-        "You are a search query rewriter for a book recommendation system. "
-        "Given the conversation history and a new user message, rewrite the message "
-        "into a single, self-contained search query. Output ONLY the query. No explanation."
-    )
+    # If the message is already specific and has no follow-up pronoun, use it directly
+    if not has_indicator and len(words) >= 4:
+        return clean_msg
 
-    trimmed_history = _trim(history)
+    try:
+        client = Groq(api_key=_get_api_key())
+        system_prompt = (
+            "You are a search query rewriter for a book recommendation system. "
+            "Given the conversation history and a new user message, rewrite the message "
+            "into a single, self-contained search query. Output ONLY the query. No explanation."
+        )
 
-    messages = [{"role": "system", "content": system_prompt}]
-    messages.extend(trimmed_history)
-    messages.append({"role": "user", "content": f"Rewrite as a standalone query: {message}"})
+        trimmed_history = _trim(history)
+        messages = [{"role": "system", "content": system_prompt}]
+        messages.extend(trimmed_history)
+        messages.append({"role": "user", "content": f"Rewrite as a standalone query: {clean_msg}"})
 
-    response = client.chat.completions.create(
-        model=GROQ_MODEL, messages=messages, temperature=0.2, max_tokens=80,
-    )
-    rewritten = response.choices[0].message.content.strip()
-    logger.info("Query rewritten: '%s' -> '%s'", message, rewritten)
-    return rewritten
+        response = client.chat.completions.create(
+            model=GROQ_MODEL, messages=messages, temperature=0.2, max_tokens=80,
+        )
+        rewritten = (response.choices[0].message.content or "").strip()
+        
+        # If the LLM returned empty or whitespace, fall back safely to original message
+        if not rewritten or len(rewritten) < 3:
+            logger.warning("Query rewrite returned empty string; falling back to original message.")
+            return clean_msg
+
+        logger.info("Query rewritten: '%s' -> '%s'", clean_msg, rewritten)
+        return rewritten
+    except Exception as e:
+        logger.warning("Query rewrite failed (%s); using original message.", e)
+        return clean_msg
 
 
 # ── 3. Response Generator ──────────────────────────────────────────────────────
@@ -156,16 +166,17 @@ def generate_response(message: str, history: list[dict], books: list[dict]) -> s
     client = Groq(api_key=_get_api_key())
 
     system_prompt = (
-        "You are a dedicated book assistant for The Reading Room.\n"
+        "You are a dedicated, knowledgeable book assistant for The Reading Room.\n"
         "Your ONLY function is to assist users with book recommendations and inquiries based strictly on the BOOK CATALOG provided below.\n\n"
         "STRICT BOUNDARIES AND GROUNDING RULES:\n"
-        "1. You must ONLY answer questions based on the provided BOOK CATALOG.\n"
-        "2. NEVER answer math calculations (e.g. '2 + 2', equations, arithmetic), general knowledge trivia, coding, weather, or random questions outside of books and literature.\n"
-        "3. If the user asks for a math calculation or any question outside of books and literature in this catalog, you MUST refuse and respond with:\n"
+        "1. You must ONLY recommend books that appear in the provided BOOK CATALOG below. Never invent, hallucinate, or suggest external books.\n"
+        "2. For each recommendation, explain why it fits using details from its catalog description.\n"
+        "3. If a request involves multiple genres or themes (e.g. sci-fi and romance), recommend the closest relevant books from the catalog, clearly explaining which aspects they satisfy (for example, suggesting available science-fiction stories and romance titles from the catalog).\n"
+        "4. NEVER answer math calculations (e.g. '2 + 2', equations, arithmetic), general knowledge trivia, coding, weather, or random questions outside of books and literature.\n"
+        "5. If the user asks for a math calculation or any question outside of books and literature, you MUST refuse and respond with:\n"
         "   \"I do not contain this information. I am a specialized book assistant and can only answer questions or provide recommendations based on the books in our library catalog.\"\n"
-        "4. You may ONLY recommend books that appear in the BOOK CATALOG below. Never invent, hallucinate, or suggest external books.\n"
-        "5. For each recommendation, explain why it fits using ONLY details from its catalog description.\n"
-        "6. If no books in the catalog match the user's request, state: 'I could not find any books matching your request in our catalog.'\n"
+        "6. Only if the retrieved catalog is completely empty or completely irrelevant to the user's book inquiry, state:\n"
+        "   \"I could not find any books matching your request in our catalog.\"\n"
         "7. For polite greetings (e.g. 'hello', 'hi'), greet warmly and invite the user to ask for book recommendations.\n\n"
         f"BOOK CATALOG:\n{context_block}"
     )

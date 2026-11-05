@@ -40,6 +40,8 @@ class BookRecommender:
 
     def recommend(self, query: str, top_k: int = 6):
         """Recommend books based on query string."""
+        if not query or not str(query).strip():
+            return []
         if not self.loaded:
             self.load()
             
